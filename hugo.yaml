@@ -36,7 +36,7 @@ menu:
         type: search
     - name: GitHub
       weight: 6
-      url: "https://github.com/jungyunsoo0713
+      url: "https://github.com/jungyunsoo0713"
       params:
         icon: github
     - name: Twitter
