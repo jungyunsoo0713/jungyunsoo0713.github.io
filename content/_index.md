@@ -2,9 +2,6 @@
 title: Young Cloud Lab
 toc: false
 ---
-
-This is the landing page.
-
 ## Explore
 
 {{< cards >}}
@@ -12,6 +9,3 @@ This is the landing page.
   {{< card link="about" title="About" icon="user" >}}
 {{< /cards >}}
 
-## Documentation
-
-For more information, visit [Hextra](https://imfing.github.io/hextra).
