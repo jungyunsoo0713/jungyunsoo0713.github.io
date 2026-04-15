@@ -1,0 +1,37 @@
+/* ☀️ GitHub 라이트모드 감성 */
+:root {
+  /* GitHub 고유의 파란색 (Links & Buttons: #0969da) */
+  --primary-hue: 213deg; 
+  --primary-saturation: 92%;
+  --primary-lightness: 45%;
+}
+
+body {
+  background-color: #ffffff !important; /* GitHub 라이트 배경 */
+}
+
+/* 🌙 GitHub 다크모드 감성 (이게 진짜 찐입니다) */
+.dark {
+  /* GitHub 다크모드 파란색 (Links & Buttons: #2f81f7) */
+  --primary-hue: 215deg;
+  --primary-saturation: 91%;
+  --primary-lightness: 58%;
+}
+
+/* GitHub 다크모드 특유의 깊고 탁한 배경색 덮어씌우기 */
+.dark body {
+  background-color: #0d1117 !important; 
+  color: #e6edf3 !important; /* GitHub 다크모드 텍스트 색상 */
+}
+
+/* 사이드바, 네비게이션 바 등 주요 영역 배경도 GitHub 색상으로 일괄 통일 */
+.dark .bg-white,
+.dark .bg-neutral-900,
+.dark .dark\:bg-neutral-900 {
+  background-color: #0d1117 !important;
+}
+
+/* 우측 목차(TOC) 배경 투명화 처리 */
+.dark .bg-gray-100 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
