@@ -1,80 +1,16 @@
-/* ☀️ GitHub 라이트모드 감성 */
-:root {
-  /* GitHub 고유의 파란색 (Links & Buttons: #0969da) */
-  --primary-hue: 213deg; 
-  --primary-saturation: 92%;
-  --primary-lightness: 45%;
-}
-
-body {
-  background-color: #ffffff !important; /* GitHub 라이트 배경 */
-}
-
-/* 🌙 GitHub 다크모드 감성 (이게 진짜 찐입니다) */
-.dark {
-  /* GitHub 다크모드 파란색 (Links & Buttons: #2f81f7) */
-  --primary-hue: 215deg;
-  --primary-saturation: 91%;
-  --primary-lightness: 58%;
-}
-
-/* GitHub 다크모드 특유의 깊고 탁한 배경색 덮어씌우기 */
-.dark body {
-  background-color: #0d1117 !important; 
-  color: #e6edf3 !important; /* GitHub 다크모드 텍스트 색상 */
-}
-
-/* 사이드바, 네비게이션 바 등 주요 영역 배경도 GitHub 색상으로 일괄 통일 */
-.dark .bg-white,
-.dark .bg-neutral-900,
-.dark .dark\:bg-neutral-900 {
-  background-color: #0d1117 !important;
-}
-
-/* 우측 목차(TOC) 배경 투명화 처리 */
-.dark .bg-gray-100 {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-/* 1. 본문 전체 컨테이너 폭 제한 */
-.hx-mx-auto.hx-flex.hx-max-w-\[90rem\] {
-    max-width: 80rem !important; /* 전체적인 틀을 좁게 */
-}
-
-/* 2. 실제 텍스트가 들어가는 문서 영역 폭 제한 */
-.hextra-content {
-    max-width: 48rem !important; /* 약 760px - 가독성 황금 사이즈 */
-    margin-left: auto !important;
-    margin-right: auto !important;
-}
-
-/* 3. 혹시 모를 내부 여백 조정 */
-article {
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
-}
-
-/* 우측 'On this page'와 본문 사이의 균형을 위해 */
-.hx-mx-auto.hx-flex {
-    max-width: 90rem; /* 전체 레이아웃의 폭을 조금 줄여서 중앙으로 모음 */
-}
-
-/* 1. 사이드바 전체 가로 폭 확장 (기본 16rem -> 20~22rem) */
+/* --- [1] 사이드바 설정 (기존 유지) --- */
 aside.hextra-sidebar-container {
     width: 22rem !important; 
     min-width: 22rem !important;
 }
 
-/* 2. 단계별 들여쓰기(Padding) 간격 축소 */
-/* 하위 메뉴로 갈수록 왼쪽 여백이 너무 커지는 것을 방지합니다 */
 .hextra-sidebar-container ul li ul {
-    padding-left: 0.75rem !important; /* 기본값보다 줄여서 공간 확보 */
+    padding-left: 0.75rem !important;
 }
 
-/* 3. 텍스트 설정: 줄바꿈은 허용하되 가독성 확보 */
 .hextra-sidebar-container a, 
 .hextra-sidebar-container button {
-    white-space: normal !important; /* 다시 줄바꿈 허용 */
+    white-space: normal !important;
     display: flex !important;
     align-items: center;
     line-height: 1.3;
@@ -82,29 +18,53 @@ aside.hextra-sidebar-container {
     padding-bottom: 0.4rem !important;
 }
 
-/* 1. 본문 전체 컨테이너 정렬 */
-.hextra-content-container {
-    /* 왼쪽 여백을 자동으로 두어 중앙으로 유도 */
-    margin-left: auto !important;
-    margin-right: auto !important;
-    /* 본문이 너무 한쪽으로 쏠리지 않도록 최대 폭 조정 */
-    max-width: 80rem !important; 
-}
+/* --- [2] 본문 폭 확장 및 중앙 정렬 (이 부분이 핵심 수정본입니다) --- */
 
-/* 2. 전체 레이아웃 구조 조정 */
+/* 전체 레이아웃 폭 제한 해제 */
 .hx-mx-auto.hx-flex.hx-max-w-\[90rem\] {
-    /* 헤더와 일치하도록 전체 컨테이너 너비를 확보 */
     max-width: 100% !important;
-    justify-content: center; /* 내부 요소들을 중앙으로 */
 }
 
-/* 3. 문서 읽기 영역(가운데 글 부분) 폭 최적화 */
+/* 본문 컨테이너 폭 확장 */
+.hextra-content-container {
+    width: 100% !important;
+    max-width: 100% !important; /* 80rem 제한 해제 */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* 실제 텍스트 영역(Subnet이란? 등) 폭 확장 */
+.hextra-content {
+    max-width: 100% !important; /* 48rem으로 묶여있던 걸 해제 */
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+}
+
+/* 아티클 영역 너비 확보 */
 article {
+    width: 100% !important;
+    max-width: 90rem !important; /* 본문이 너무 퍼지는 게 싫다면 이 수치로 조절하세요 */
+    margin: 0 auto !important;
     padding-left: 2rem !important;
     padding-right: 2rem !important;
 }
 
-/* 4. 본문 영역이 사이드바에 가려지지 않게 위치 조정 */
-.hextra-content-container {
-    margin-left: 0 !important; /* 테마 구조에 따라 조정 필요할 수 있음 */
+/* --- [3] GitHub 테마 설정 (기존 유지) --- */
+:root {
+  --primary-hue: 213deg; 
+  --primary-saturation: 92%;
+  --primary-lightness: 45%;
+}
+body { background-color: #ffffff !important; }
+.dark {
+  --primary-hue: 215deg;
+  --primary-saturation: 91%;
+  --primary-lightness: 58%;
+}
+.dark body {
+  background-color: #0d1117 !important; 
+  color: #e6edf3 !important;
+}
+.dark .bg-white, .dark .bg-neutral-900, .dark .dark\:bg-neutral-900 {
+  background-color: #0d1117 !important;
 }
