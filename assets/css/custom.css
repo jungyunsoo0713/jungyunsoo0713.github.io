@@ -1,70 +1,37 @@
-/* --- [1] 사이드바 설정 (기존 유지) --- */
+/* --- 1. 사이드바 확장 (이건 유지) --- */
 aside.hextra-sidebar-container {
     width: 22rem !important; 
     min-width: 22rem !important;
 }
 
-.hextra-sidebar-container ul li ul {
-    padding-left: 0.75rem !important;
-}
+/* --- 2. 본문 폭 시원하게 늘리기 (강력 조치) --- */
 
-.hextra-sidebar-container a, 
-.hextra-sidebar-container button {
-    white-space: normal !important;
-    display: flex !important;
-    align-items: center;
-    line-height: 1.3;
-    padding-top: 0.4rem !important;
-    padding-bottom: 0.4rem !important;
-}
-
-/* --- [2] 본문 폭 확장 및 중앙 정렬 (이 부분이 핵심 수정본입니다) --- */
-
-/* 전체 레이아웃 폭 제한 해제 */
-.hx-mx-auto.hx-flex.hx-max-w-\[90rem\] {
+/* 90rem으로 제한된 모든 컨테이너를 강제로 100%로 해제 */
+[class*="max-w-[90rem]"], 
+[class*="max-w-screen-xl"],
+.hx-max-w-\[90rem\] {
     max-width: 100% !important;
 }
 
-/* 본문 컨테이너 폭 확장 */
-.hextra-content-container {
-    width: 100% !important;
-    max-width: 100% !important; /* 80rem 제한 해제 */
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-/* 실제 텍스트 영역(Subnet이란? 등) 폭 확장 */
+/* 본문이 들어가는 메인 영역 폭 강제 확장 */
+main.hx-w-full, 
+.hextra-content-container,
 .hextra-content {
-    max-width: 100% !important; /* 48rem으로 묶여있던 걸 해제 */
-    padding-left: 3rem !important;
-    padding-right: 3rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
-/* 아티클 영역 너비 확보 */
+/* 실제 글자가 써지는 article 영역 */
 article {
     width: 100% !important;
-    max-width: 90rem !important; /* 본문이 너무 퍼지는 게 싫다면 이 수치로 조절하세요 */
-    margin: 0 auto !important;
+    /* 48rem(약 760px) 제한이 걸려있을 확률이 매우 높음 -> 강제 해제 */
+    max-width: 90rem !important; 
+    margin-left: auto !important;
+    margin-right: auto !important;
     padding-left: 2rem !important;
     padding-right: 2rem !important;
 }
 
-/* --- [3] GitHub 테마 설정 (기존 유지) --- */
-:root {
-  --primary-hue: 213deg; 
-  --primary-saturation: 92%;
-  --primary-lightness: 45%;
-}
-body { background-color: #ffffff !important; }
-.dark {
-  --primary-hue: 215deg;
-  --primary-saturation: 91%;
-  --primary-lightness: 58%;
-}
-.dark body {
-  background-color: #0d1117 !important; 
-  color: #e6edf3 !important;
-}
-.dark .bg-white, .dark .bg-neutral-900, .dark .dark\:bg-neutral-900 {
-  background-color: #0d1117 !important;
-}
+/* --- 3. GitHub 테마 (유지) --- */
+.dark body { background-color: #0d1117 !important; color: #e6edf3 !important; }
+.dark .bg-white, .dark .bg-neutral-900, .dark .dark\:bg-neutral-900 { background-color: #0d1117 !important; }
