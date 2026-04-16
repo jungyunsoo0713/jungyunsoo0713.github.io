@@ -39,3 +39,11 @@ body {
 .dark .bg-gray-100 {
   background-color: rgba(255, 255, 255, 0.05) !important;
 }
+
+/* --- 본문 텍스트 폭 제한 및 중앙 정렬 --- */
+.hx-prose,
+article {
+    max-width: 48rem !important; /* 텍스트 폭을 제한합니다. (약 760px) */
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
