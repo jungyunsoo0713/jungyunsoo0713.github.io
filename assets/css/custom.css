@@ -1,11 +1,17 @@
-/* --- 1. GitHub 다크/라이트 테마 (질문자님 설정) --- */
+/* --- 1. 테마 변수 (GitHub 색상 + Hextra 공식 폭 해제) --- */
 :root {
+  /* GitHub 라이트모드 */
   --primary-hue: 213deg; 
   --primary-saturation: 92%;
   --primary-lightness: 45%;
+
+  /* 🔥 Hextra 공식 페이지 폭 제한 해제 (이게 핵심 변수입니다) */
+  --hextra-max-page-width: 100% !important; 
 }
+
 body { background-color: #ffffff !important; }
 
+/* GitHub 다크모드 */
 .dark {
   --primary-hue: 215deg;
   --primary-saturation: 91%;
@@ -23,7 +29,7 @@ body { background-color: #ffffff !important; }
 }
 
 
-/* --- 2. 사이드바 폭 확장 (잘 적용됐던 부분) --- */
+/* --- 2. 사이드바 폭 확장 --- */
 aside.hextra-sidebar-container {
     width: 22rem !important; 
     min-width: 22rem !important;
@@ -38,38 +44,18 @@ aside.hextra-sidebar-container {
 }
 
 
-/* --- 3. 본문 폭 강제 확장 (Tailwind 좁은 폭 원천 차단) --- */
+/* --- 3. 본문 텍스트 폭 (Tailwind 65ch 제한) 원천 파괴 --- */
 
-/* 전체 레이아웃 틀 100%로 확장 */
-.hx-mx-auto.hx-flex.hx-max-w-\[90rem\] {
-    max-width: 100% !important;
-}
-
-/* Hextra 메인 컨텐츠 영역 제한 100% 풀기 */
-main.hx-w-full,
-main .hx-prose,
-article.hx-w-full,
-.hextra-content-container,
-.hextra-content {
-    max-width: 100% !important;
-    width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-/* Tailwind 기본 폭 제한 클래스 저격 무력화 */
-[class*="hx-max-w-4xl"],
-[class*="hx-max-w-3xl"],
-[class*="hx-max-w-screen-md"],
-[class*="max-w-4xl"] {
-    max-width: 90rem !important; 
-}
-
-/* 실제 글자 여백 확보 */
+/* 글자 수를 65개로 제한하는 Tailwind의 족쇄(prose)를 none으로 풀어버립니다 */
+.hx-prose, 
+.prose,
 article {
+    max-width: none !important; 
     width: 100% !important;
-    max-width: 90rem !important; 
-    margin: 0 auto !important;
+}
+
+/* 본문 좌우 여백만 살짝 확보 (너무 꽉 차지 않게) */
+.hx-prose {
     padding-left: 2rem !important;
     padding-right: 2rem !important;
 }
