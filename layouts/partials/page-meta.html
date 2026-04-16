@@ -1,5 +1,5 @@
-{{ if .Date }}
-  <div class="hx-mt-2 hx-text-sm hx-text-gray-500">
-    {{ .Date.Format "2006-01-02" }}
+{{- if .Date -}}
+  <div class="hx-mt-1 hx-text-sm hx-text-gray-500">
+    작성일: {{ .Date | time.Format ":date_long" }}
   </div>
-{{ end }}
+{{- end -}}
