@@ -43,7 +43,7 @@ body {
 /* --- 본문 폭 제한 및 강제 중앙 정렬 --- */
 .hextra-content-container,
 .hextra-content {
-    max-width: 50rem !important; /* 숫자를 줄이면 더 좁아지고, 늘리면 넓어집니다 */
+    max-width: 48rem !important; /* 숫자를 줄이면 더 좁아지고, 늘리면 넓어집니다 */
     margin-left: auto !important;
     margin-right: auto !important;
     width: 100% !important;
