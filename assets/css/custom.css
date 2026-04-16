@@ -82,6 +82,28 @@ aside.hextra-sidebar-container {
     padding-bottom: 0.4rem !important;
 }
 
+/* 1. 본문 전체 컨테이너 정렬 */
+.hextra-content-container {
+    /* 왼쪽 여백을 자동으로 두어 중앙으로 유도 */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    /* 본문이 너무 한쪽으로 쏠리지 않도록 최대 폭 조정 */
+    max-width: 80rem !important; 
+}
+
+/* 2. 전체 레이아웃 구조 조정 */
+.hx-mx-auto.hx-flex.hx-max-w-\[90rem\] {
+    /* 헤더와 일치하도록 전체 컨테이너 너비를 확보 */
+    max-width: 100% !important;
+    justify-content: center; /* 내부 요소들을 중앙으로 */
+}
+
+/* 3. 문서 읽기 영역(가운데 글 부분) 폭 최적화 */
+article {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+}
+
 /* 4. 본문 영역이 사이드바에 가려지지 않게 위치 조정 */
 .hextra-content-container {
     margin-left: 0 !important; /* 테마 구조에 따라 조정 필요할 수 있음 */
