@@ -1,37 +1,75 @@
-/* --- 1. 사이드바 확장 (이건 유지) --- */
+/* --- 1. GitHub 다크/라이트 테마 (질문자님 설정) --- */
+:root {
+  --primary-hue: 213deg; 
+  --primary-saturation: 92%;
+  --primary-lightness: 45%;
+}
+body { background-color: #ffffff !important; }
+
+.dark {
+  --primary-hue: 215deg;
+  --primary-saturation: 91%;
+  --primary-lightness: 58%;
+}
+.dark body {
+  background-color: #0d1117 !important; 
+  color: #e6edf3 !important;
+}
+.dark .bg-white, .dark .bg-neutral-900, .dark .dark\:bg-neutral-900 {
+  background-color: #0d1117 !important;
+}
+.dark .bg-gray-100 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+
+/* --- 2. 사이드바 폭 확장 (잘 적용됐던 부분) --- */
 aside.hextra-sidebar-container {
     width: 22rem !important; 
     min-width: 22rem !important;
 }
+.hextra-sidebar-container ul li ul {
+    padding-left: 0.75rem !important;
+}
+.hextra-sidebar-container a, 
+.hextra-sidebar-container button {
+    white-space: normal !important;
+    line-height: 1.4 !important;
+}
 
-/* --- 2. 본문 폭 시원하게 늘리기 (강력 조치) --- */
 
-/* 90rem으로 제한된 모든 컨테이너를 강제로 100%로 해제 */
-[class*="max-w-[90rem]"], 
-[class*="max-w-screen-xl"],
-.hx-max-w-\[90rem\] {
+/* --- 3. 본문 폭 강제 확장 (Tailwind 좁은 폭 원천 차단) --- */
+
+/* 전체 레이아웃 틀 100%로 확장 */
+.hx-mx-auto.hx-flex.hx-max-w-\[90rem\] {
     max-width: 100% !important;
 }
 
-/* 본문이 들어가는 메인 영역 폭 강제 확장 */
-main.hx-w-full, 
+/* Hextra 메인 컨텐츠 영역 제한 100% 풀기 */
+main.hx-w-full,
+main .hx-prose,
+article.hx-w-full,
 .hextra-content-container,
 .hextra-content {
-    width: 100% !important;
     max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
-/* 실제 글자가 써지는 article 영역 */
+/* Tailwind 기본 폭 제한 클래스 저격 무력화 */
+[class*="hx-max-w-4xl"],
+[class*="hx-max-w-3xl"],
+[class*="hx-max-w-screen-md"],
+[class*="max-w-4xl"] {
+    max-width: 90rem !important; 
+}
+
+/* 실제 글자 여백 확보 */
 article {
     width: 100% !important;
-    /* 48rem(약 760px) 제한이 걸려있을 확률이 매우 높음 -> 강제 해제 */
     max-width: 90rem !important; 
-    margin-left: auto !important;
-    margin-right: auto !important;
+    margin: 0 auto !important;
     padding-left: 2rem !important;
     padding-right: 2rem !important;
 }
-
-/* --- 3. GitHub 테마 (유지) --- */
-.dark body { background-color: #0d1117 !important; color: #e6edf3 !important; }
-.dark .bg-white, .dark .bg-neutral-900, .dark .dark\:bg-neutral-900 { background-color: #0d1117 !important; }
