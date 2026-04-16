@@ -59,15 +59,30 @@ article {
     max-width: 90rem; /* 전체 레이아웃의 폭을 조금 줄여서 중앙으로 모음 */
 }
 
-/* 사이드바 전체 너비 확장 */
-.hextra-sidebar-container {
-    width: 20rem !important; /* 기본값보다 넓게 설정 (예: 16rem -> 20rem) */
+/* 1. 사이드바 전체 가로 폭 확장 (기본 16rem -> 20~22rem) */
+aside.hextra-sidebar-container {
+    width: 22rem !important; 
+    min-width: 22rem !important;
 }
 
-/* 사이드바 내부 텍스트 줄바꿈 방지 */
+/* 2. 단계별 들여쓰기(Padding) 간격 축소 */
+/* 하위 메뉴로 갈수록 왼쪽 여백이 너무 커지는 것을 방지합니다 */
+.hextra-sidebar-container ul li ul {
+    padding-left: 0.75rem !important; /* 기본값보다 줄여서 공간 확보 */
+}
+
+/* 3. 텍스트 설정: 줄바꿈은 허용하되 가독성 확보 */
 .hextra-sidebar-container a, 
 .hextra-sidebar-container button {
-    white-space: nowrap; /* 텍스트가 밑으로 떨어지지 않게 설정 */
-    overflow: hidden;
-    text-overflow: ellipsis; /* 너무 길면 ... 처리 */
+    white-space: normal !important; /* 다시 줄바꿈 허용 */
+    display: flex !important;
+    align-items: center;
+    line-height: 1.3;
+    padding-top: 0.4rem !important;
+    padding-bottom: 0.4rem !important;
+}
+
+/* 4. 본문 영역이 사이드바에 가려지지 않게 위치 조정 */
+.hextra-content-container {
+    margin-left: 0 !important; /* 테마 구조에 따라 조정 필요할 수 있음 */
 }
