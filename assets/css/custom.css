@@ -35,3 +35,15 @@ body {
 .dark .bg-gray-100 {
   background-color: rgba(255, 255, 255, 0.05) !important;
 }
+
+/* 본문 영역의 최대 가로폭을 제한 (기본값보다 좁게 설정) */
+.hextra-content {
+    max-width: 50rem !important; /* 약 800px 정도입니다. 취향에 따라 45~55 사이로 조절하세요. */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 우측 'On this page'와 본문 사이의 균형을 위해 */
+.hx-mx-auto.hx-flex {
+    max-width: 90rem; /* 전체 레이아웃의 폭을 조금 줄여서 중앙으로 모음 */
+}
