@@ -50,13 +50,6 @@ params:
     displayTitle: true
     displayLogo: false
 
-  # --- 여기부터 추가 ---
-  page:
-    showDate: true        # 페이지 상단 혹은 하단에 발행일 표시
-    showLastMod: true     # 수정일 표시 (lastmod 필드가 있을 때)
-    showEditLink: true    # 
-  # --------------------
-
   footer:
     displayCopyright: false
     displayPoweredBy: true
