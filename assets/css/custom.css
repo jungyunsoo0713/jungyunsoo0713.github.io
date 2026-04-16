@@ -39,3 +39,23 @@ body {
 .dark .bg-gray-100 {
   background-color: rgba(255, 255, 255, 0.05) !important;
 }
+
+/* =========================================
+   3. 📁 왼쪽 사이드바 텍스트 길이 및 여백 해결
+========================================= */
+/* 사이드바 너비를 살짝만 넓혀서 공간 확보 */
+aside.hextra-sidebar-container {
+    width: 20rem !important; 
+}
+
+/* 하위 메뉴로 들어갈 때 들여쓰기(여백)를 줄여서 글자 공간 확보 */
+.hextra-sidebar-container ul li ul {
+    padding-left: 0.75rem !important; 
+}
+
+/* 텍스트 줄바꿈 허용 및 위아래 간격 최적화 */
+.hextra-sidebar-container a, 
+.hextra-sidebar-container button {
+    white-space: normal !important;
+    line-height: 1.4 !important;
+}
