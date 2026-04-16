@@ -1,60 +1,42 @@
 /* --- 1. 테마 변수 (GitHub 색상 + Hextra 공식 폭 해제) --- */
 :root {
-  /* GitHub 라이트모드 */
   --primary-hue: 213deg; 
   --primary-saturation: 92%;
   --primary-lightness: 45%;
-
-  /* 🔥 Hextra 공식 페이지 폭 제한 해제 (이게 핵심 변수입니다) */
   --hextra-max-page-width: 100% !important; 
 }
-
 body { background-color: #ffffff !important; }
-
-/* GitHub 다크모드 */
 .dark {
   --primary-hue: 215deg;
   --primary-saturation: 91%;
   --primary-lightness: 58%;
 }
-.dark body {
-  background-color: #0d1117 !important; 
-  color: #e6edf3 !important;
-}
-.dark .bg-white, .dark .bg-neutral-900, .dark .dark\:bg-neutral-900 {
-  background-color: #0d1117 !important;
-}
-.dark .bg-gray-100 {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-}
-
+.dark body { background-color: #0d1117 !important; color: #e6edf3 !important; }
+.dark .bg-white, .dark .bg-neutral-900, .dark .dark\:bg-neutral-900 { background-color: #0d1117 !important; }
+.dark .bg-gray-100 { background-color: rgba(255, 255, 255, 0.05) !important; }
 
 /* --- 2. 사이드바 폭 확장 --- */
 aside.hextra-sidebar-container {
     width: 22rem !important; 
     min-width: 22rem !important;
 }
-.hextra-sidebar-container ul li ul {
-    padding-left: 0.75rem !important;
-}
-.hextra-sidebar-container a, 
-.hextra-sidebar-container button {
+.hextra-sidebar-container ul li ul { padding-left: 0.75rem !important; }
+.hextra-sidebar-container a, .hextra-sidebar-container button {
     white-space: normal !important;
     line-height: 1.4 !important;
 }
 
-
-/* --- 3. 본문 텍스트 폭 (Tailwind 65ch 제한) 원천 파괴 --- */
-
-/* 글자 수를 65개로 제한하는 Tailwind의 족쇄(prose)를 none으로 풀어버립니다 */
+/* --- 3. 본문 텍스트 폭 (적당히 넓게 브레이크 걸기) --- */
 .hx-prose, 
 .prose,
 article {
-    max-width: none !important; 
+    /* 기존 none(무제한)에서 65rem(약 1040px)으로 타협! */
+    max-width: 65rem !important; 
     width: 100% !important;
+    margin: 0 auto !important; /* 중앙 정렬 */
 }
 
-/* 본문 좌우 여백만 살짝 확보 (너무 꽉 차지 않게) */
+/* 본문 좌우 여백 */
 .hx-prose {
     padding-left: 2rem !important;
     padding-right: 2rem !important;
