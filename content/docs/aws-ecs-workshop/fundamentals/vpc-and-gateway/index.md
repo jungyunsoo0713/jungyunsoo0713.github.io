@@ -2,7 +2,7 @@
 title: "01. 코어 네트워크 (VPC & 게이트웨이)"
 weight: 1
 ---
-
+> **작성일:** 2026-04-17 | **수정일:** 2026-04-17
 ```json
 {
   "BasicRetailStoreVPC0FA21CD5": {
