@@ -196,14 +196,14 @@ Internet Gateway를 생성하는 코드입니다.
 
 ---
 
-IGW의 Logical ID는 `BasicRetailStoreVPCIGW448D34CF`입니다.
+IGW의 Logical ID는 `"BasicRetailStoreVPCIGW448D34CF"`입니다.
 
 이 코드를 보면
 ```ts
 new VPC(this, 'BasicRetailStoreVPC')
 ```
 
-`BasicRetailStoreVPC`는 VPC construct의 id이고, IGW는 CDK가 이 VPC construct 아래에서 내부적으로 생성한 관련 리소스입니다. 따라서 IGW의 construct path는 대략 `MyStack/BasicRetailStoreVPC/IGW/Resource` 형태가 됩니다.
+`'BasicRetailStoreVPC'`는 VPC construct의 id이고, IGW는 CDK가 이 VPC construct 아래에서 내부적으로 생성한 관련 리소스입니다. 따라서 IGW의 construct path는 대략 `MyStack/BasicRetailStoreVPC/IGW/Resource` 형태가 됩니다.
 
 CDK는 이 construct path를 바탕으로 Logical ID를 생성합니다. 이때 사람이 읽을 수 있는 앞부분은 `BasicRetailStoreVPCIGW`가 되며, 여기에 해시값이 붙어 `BasicRetailStoreVPCIGW448D34CF`와 같은 형태가 됩니다. 참고로 `Resource`는 사람이 읽을 수 있는 앞부분에서는 생략되지만, 해시 계산(`MyStack/BasicRetailStoreVPC/IGW/Resource`)에는 포함됩니다.
 
