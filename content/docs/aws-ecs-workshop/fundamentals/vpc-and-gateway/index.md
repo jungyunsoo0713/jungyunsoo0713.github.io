@@ -1,3 +1,8 @@
+---
+title: "01. 코어 네트워크 (VPC & 게이트웨이)"
+weight: 1
+---
+
 ```json
 {
   "BasicRetailStoreVPC0FA21CD5": {
