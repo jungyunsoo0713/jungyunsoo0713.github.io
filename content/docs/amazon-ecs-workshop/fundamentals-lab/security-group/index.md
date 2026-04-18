@@ -124,7 +124,7 @@ weight: 4
 ## 1. `"BasicALBSecurityGroupF9D92961"`
 
 ```json
-"BasicALBSecurityGroupF9D92961": {
+  "BasicALBSecurityGroupF9D92961": {
    "Type": "AWS::EC2::SecurityGroup",
    "Properties": {
     "GroupDescription": "Security Group for the UI Application Load Balancer",
@@ -279,7 +279,7 @@ ALB(Application Load Balancer)에 대한 보안 그룹(Security Group)을 생성
 ## 2. `"BasicUISecurityGroup41F5FEAF"`
 
 ```json
-"BasicUISecurityGroup41F5FEAF": {
+  "BasicUISecurityGroup41F5FEAF": {
    "Type": "AWS::EC2::SecurityGroup",
    "Properties": {
     "GroupDescription": "Security Group for ECS UI Task",
