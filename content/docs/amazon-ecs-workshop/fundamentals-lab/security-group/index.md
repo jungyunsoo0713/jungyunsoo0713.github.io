@@ -355,7 +355,7 @@ ALB(Application Load Balancer)에 대한 보안 그룹(Security Group)을 생성
 
 로드 밸런서에 연결된 보안 그룹처럼 여러 포트를 허용하지 않고 오직 8080 포트 트래픽만 허용하는 이유는, 이 보안 그룹이 연결된 ECS UI Task가 8080 포트에서만 애플리케이션 요청을 받기 때문입니다. 여기서 8080 포트는 이 애플리케이션이 HTTP 요청을 수신하도록 열어둔 포트입니다.
 
-참고로 사용자는 HTTPS(443 포트)로 ALB에 요청을 보내고, ALB는 이 HTTPS 연결을 종료한 뒤(TLS 종료) 백엔드인 ECS UI Task에 HTTP로 요청을 전달합니다.
+참고로 사용자는 HTTPS(443 포트)로 ALB에 요청을 보내고, ALB는 이 HTTPS 연결을 종료(TLS 종료)한 뒤 백엔드인 ECS UI Task에 HTTP로 요청을 전달합니다.
 
 ---
 
