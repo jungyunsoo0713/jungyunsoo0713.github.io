@@ -197,7 +197,7 @@ weight: 4
   },
 ```
 
-ALB(Application Load Balancer)에 대한 보안 그룹(Security Group)을 생성합니다.
+ALB(Application Load Balancer)에 대한 보안 그룹(Security Group)을 생성합니다. 일반적으로는 리소스에 적용할 네트워크 접근 제어 정책을 먼저 정해야 하므로, 보안 그룹을 먼저 정의한 뒤 이를 리소스에 연결하는 방식으로 구성합니다.
 
 ---
 
