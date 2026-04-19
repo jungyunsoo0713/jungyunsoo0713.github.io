@@ -1,7 +1,6 @@
 ---
 title: "06. ECS 권한 (IAM Roles & Policies)"
 weight: 6
-draft: true
 ---
 > **작성일:** 2026-04-19 | **수정일:** 2026-04-19
 ```json
@@ -221,7 +220,7 @@ draft: true
   },
 ```
 
-IAM Role을 생성합니다. `"EcsTaskExecutionRole"`은 ECS Task 실행에 필요한 권한을 담는 IAM Role입니다.
+IAM Role을 생성합니다. ECS Task Execution Role은 ECS Task 실행에 필요한 권한을 담는 IAM Role입니다.
 
 ---
 
@@ -252,7 +251,7 @@ IAM Role은 특정 AWS 리소스가 다른 AWS 리소스에 접근할 수 있도
 
 `"Effect"`는 해당 행위를 허용할지 거부할지를 의미합니다. 여기서는 `"Allow"`이므로 허용한다는 뜻입니다.
 
-`"sts:AssumeRole"`에서 `"sts"`는 AWS Security Token Service를 의미하고, `"AssumeRole"`은 어떤 주체가 IAM Role을 assume(맡아 사용하는)하는 것이라고 볼 수 있습니다. 이를 통해 AWS STS는 해당 주체에게 임시 보안 자격 증명을 발급합니다. 이 임시 보안 자격 증명에는 access key ID, secret access key, session token이 포함되며, 일정 시간이 지나면 만료됩니다. 따라서 해당 주체가 IAM Role을 영구적으로 소유하는 것이 아니라, 일정 시간 동안만 그 Role에 연결된 권한을 사용할 수 있습니다. 즉, 엄밀히 말하면 IAM 권한을 소유한다기보다 잠시 빌려쓴다고 볼 수 있습니다.
+`"sts:AssumeRole"`에서 `"sts"`는 AWS Security Token Service를 의미하고, `"AssumeRole"`은 어떤 주체가 IAM Role을 assume(맡아 사용하는)하는 것이라고 볼 수 있습니다. 이를 통해 AWS STS는 해당 주체에게 임시 보안 자격 증명을 발급합니다. 이 임시 보안 자격 증명에는 Access Key ID, Secret Access Key, Session Token이 포함되며, 일정 시간이 지나면 만료됩니다. 따라서 해당 주체가 IAM Role을 영구적으로 소유하는 것이 아니라, 일정 시간 동안만 그 Role에 연결된 권한을 사용할 수 있습니다. 즉, 엄밀히 말하면 IAM 권한을 소유한다기보다 잠시 빌려쓴다고 볼 수 있습니다.
 
 `"Principal"`은 이 IAM Role을 assume할 수 있는 주체를 뜻합니다. 여기서는 `"ecs-tasks.amazonaws.com"`가 이 IAM Role을 assume할 수 있는 주체입니다.
 
@@ -337,7 +336,7 @@ IAM Role은 특정 AWS 리소스가 다른 AWS 리소스에 접근할 수 있도
   },
 ```
 
-IAM Role을 생성합니다. `EcsTaskExecutionRoleDefaultPolicy`는 ECS Task 실행에 필요한 권한을 정의한 IAM Policy입니다.
+IAM Policy를 생성합니다. `"EcsTaskExecutionRoleDefaultPolicy"`는 ECS Task 실행에 필요한 권한을 정의한 IAM Policy입니다.
 
 `"BasicRetailStoreEcsTaskExecutionRoleCAE88D2C"`는 IAM Role 자체입니다. 이 IAM Role에는 앞서 Managed Policy가 붙었고, 여기서 정의한 IAM Policy도 `"Roles"` 속성을 통해 같은 IAM Role에 추가로 붙습니다.
 
@@ -361,11 +360,15 @@ IAM Role을 생성합니다. `EcsTaskExecutionRoleDefaultPolicy`는 ECS Task 실
 
 `"Action"`은 이 정책이 허용할 AWS 작업 목록입니다.
 
-`"ecs:TagResource"`는 ECS 리소스에 태그를 붙일 수 있다는 것을 의미합니다. 리소스에 태그가 붙으면 동일한 태그를 가진 리소스를 한번에 필터링할 수 있기 때문에 리소스들의 관리가 편해집니다. 
+`"ecs:TagResource"`는 ECS 리소스에 태그를 붙일 수 있다는 것을 의미합니다. 리소스에 태그가 붙으면 동일한 태그를 가진 리소스를 한 번에 필터링할 수 있기 때문에 리소스들의 관리가 편해집니다. 
 
 `"logs:CreateLogGroup"`는 CloudWatch Logs의 로그 그룹을 만들 수 있음을 의미합니다. 
 
-`"ssm:GetParameters"`는 Systems Manager Parameter Store에 저장된 파라미터 값을 읽어올 수 있음을 의미합니다. Systems Manager Parameter Store는 애플리케이션 실행에 필요한 파라미터들을 저장하는 AWS 서비스입니다.
+`"ssm"`은 AWS Systems Manager를 의미합니다.
+
+AWS Systems Manager는 관리 대상인 EC2 인스턴스나 다른 리소스들을 중앙에서 관리하는 서비스입니다. 이 글에서는 ECS Task와 관련된 권한을 설명하고 있으므로, Systems Manager가 컨테이너와 연결되거나 명령 전달에 관여하는 상황도 함께 등장할 수 있습니다. 다만 Systems Manager가 컨테이너를 직접 대신 실행하는 것은 아니며, 실제 명령 실행은 컨테이너 내부에서 이루어집니다. 사용자가 입력한 명령은 Systems Manager가 받아 Systems Manager의 세션 채널을 통해 컨테이너로 전달하고, 실제 명령 실행은 컨테이너 내부에서 이루어집니다.
+
+`"ssm:GetParameters"`는 Systems Manager의 Parameter Store 기능에 저장된 파라미터 값을 읽어올 수 있음을 의미합니다. Parameter Store는 애플리케이션 실행에 필요한 파라미터들을 저장하는 기능을 가진 AWS 서비스입니다.
 
 `"Resource": "*"`는 `"Action"`의 대상이 되는 리소스를 모든 리소스로 지정한다는 뜻입니다. 즉, 특정 리소스로 대상을 제한하지 않겠다는 의미입니다.
 
@@ -422,7 +425,7 @@ IAM Role을 생성합니다. `EcsTaskExecutionRoleDefaultPolicy`는 ECS Task 실
   },
 ```
 
-IAM Role을 생성합니다. `"EcsTaskRole"`은 ECS Task 안에서 실행되는 애플리케이션 컨테이너가 사용하는 IAM Role입니다. `"EcsTaskRole"`은 개별 컨테이너에 직접 부여되는 IAM Role이 아니라, ECS Task에 부여되는 IAM Role입니다. 따라서 해당 Task 안에서 실행되는 컨테이너는 이 Role의 임시 자격 증명을 사용할 수 있습니다.
+IAM Role을 생성합니다. ECS Task Role은 ECS Task 안에서 실행되는 애플리케이션 컨테이너가 사용하는 IAM Role입니다. ECS Task Role은 개별 컨테이너에 직접 부여되는 IAM Role이 아니라, ECS Task에 부여되는 IAM Role입니다. 따라서 해당 Task 안에서 실행되는 컨테이너는 이 Role의 임시 자격 증명을 사용할 수 있습니다.
 
 ---
 
@@ -493,4 +496,110 @@ IAM Role을 생성합니다. `"EcsTaskRole"`은 ECS Task 안에서 실행되는 
 
 IAM Policy를 생성합니다. 앞선 IAM Role(`"BasicRetailStoreEcsTaskRole14589F14"`)에 추가하는 IAM Policy입니다.
 
+---
 
+```json
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ssmmessages:CreateControlChannel",
+        "ssmmessages:CreateDataChannel",
+        "ssmmessages:OpenControlChannel",
+        "ssmmessages:OpenDataChannel"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+```
+
+이 `"PolicyDocument"`에 포함된 첫 번째 권한은 ECS Task 안의 컨테이너가 AWS Systems Manager와 통신하는 데 필요한 `"ssmmessages"` 관련 작업을 허용합니다.
+
+AWS Systems Manager에는 Parameter Store 외에도 Session Manager 기능이 있습니다.
+
+`"ssmmessages"`의 `"ssm"`은 AWS Systems Manager를 의미합니다. `"ssmmessages"`는 Systems Manager가 메시지/채널 통신에 사용하는 API 네임스페이스입니다. `"CreateControlChannel"`에서 `"ControlChannel"`은 명령과 제어 신호가 오가는 제어 채널을 의미합니다. 따라서 `"ssmmessages:CreateControlChannel"`은 ECS 태스크 내부의 컨테이너가 Systems Manager와 제어 메시지를 주고받기 위한 제어 채널을 생성할 수 있음을 의미합니다.
+
+`"ssmmessages:CreateDataChannel"`는 데이터 메시지를 위한 데이터 채널을 등록할 수 있음을 의미합니다.  
+
+제어 메시지와 데이터 메시지의 차이는, 제어 메시지는 연결과 실행을 지시하는 메시지고, 데이터 메시지는 그 연결과 실행 과정에서 입력값, 출력값, 실행 결과처럼 실제로 전달되는 내용을 담은 메시지입니다. 
+
+예를 들면, 사용자가 ECS 안의 컨테이너에 접속해 `ls` 명령어를 입력하면, Systems Manager가 이를 컨테이너로 전달하는 상황을 생각해볼 수 있습니다. 이때 “세션을 열어라”, “채널을 만들어라”, “`ls`를 실행해라” 같은 지시는 제어 메시지에 해당합니다. 반면 `ls` 실행 후 화면에 출력된 파일 목록, 입력한 명령어, 명령 실행 결과로 전달되는 실제 출력 내용은 데이터 메시지에 해당합니다.
+
+`"ssmmessages:OpenControlChannel"`은 컨테이너가 Systems Manager와 제어 메시지를 주고받을 수 있도록 하는 제어 채널을 실제로 여는 권한입니다. 앞서 `"ssmmessages:CreateControlChannel"`이 제어 채널을 생성하는 권한이라면, `"ssmmessages:OpenControlChannel"`은 이렇게 생성된 채널을 실제 연결 상태로 여는 권한입니다.
+
+`"ssmmessages:OpenDataChannel"`은 `"ssmmessages:CreateDataChannel"`로 생성한 데이터 채널을 실제로 열어, Systems Manager와 데이터 입출력을 주고받을 수 있게 하는 권한입니다.
+
+정리하자면:
+
+- `"ssmmessages:CreateControlChannel"` → 제어 채널 생성
+- `"ssmmessages:OpenControlChannel"` → 생성된 제어 채널 열기
+- `"ssmmessages:CreateDataChannel"` → 데이터 채널 생성
+- `"ssmmessages:OpenDataChannel"` → 생성된 데이터 채널 열기
+
+---
+
+`"Resource"`의 값에는 보통 특정 AWS 리소스의 ARN처럼, 권한의 대상을 식별하는 값이 들어갑니다. 하지만 이 경우에는 특정 리소스 하나를 지정하는 방식으로 권한 대상을 표현하는 것이 적절하지 않기 때문에 `"Resource": "*"`로 설정합니다. 왜냐하면 이 권한은 특정 AWS 리소스를 대상으로 수행되는 작업이 아니라, Systems Manager와의 세션 통신 기능 자체를 사용하기 위한 권한이기 때문입니다.
+
+---
+
+```json
+      {
+       "Action": [
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientRootAccess",
+        "elasticfilesystem:ClientWrite"
+       ],
+       "Condition": {
+        "Bool": {
+         "elasticfilesystem:AccessedViaMountTarget": "true"
+        }
+       },
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "StorageEfsFileSystemF296E1B3",
+         "Arn"
+        ]
+       }
+      }
+```
+
+이 `"PolicyDocument"`에 포함된 두 번째 권한은 ECS Task 안의 컨테이너가 특정 EFS 파일 시스템을 마운트하고 사용할 수 있도록 허용합니다.
+
+---
+
+```json
+       "Action": [
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientRootAccess",
+        "elasticfilesystem:ClientWrite"
+       ],
+```
+
+`"elasticfilesystem:ClientMount"`는 EFS 파일 시스템을 마운트할 수 있음을, `"elasticfilesystem:ClientRootAccess"`는 EFS에 root 사용자로 접근할 수 있음을, `"elasticfilesystem:ClientWrite"`는 파일을 쓸 수 있음을 의미합니다.
+
+---
+
+```json
+       "Condition": {
+        "Bool": {
+         "elasticfilesystem:AccessedViaMountTarget": "true"
+        }
+       },
+```
+
+`"Condition"`은 이 권한이 적용되는 조건을 의미합니다. 여기서는 `"elasticfilesystem:AccessedViaMountTarget": "true"`로 설정되어 있으므로, 해당 EFS 파일 시스템에 대한 접근은 EFS Mount Target을 통한 정상적인 마운트 방식일 때만 허용됩니다. 이 마운트 방식은 EFS를 네트워크 드라이브처럼 직접 붙여서 사용하는 기본 방식입니다. 참고로 EFS에 접근할 때는 정해진 경로와 사용자 규칙을 강제로 적용하는 전용 진입점인 EFS Access Point를 통한 마운트 방식을 사용할 수도 있으며, AWS Transfer Family 서비스를 통해 접근하는 방식도 존재합니다.
+
+---
+
+```json
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "StorageEfsFileSystemF296E1B3",
+         "Arn"
+        ]
+       }
+```
+
+`"Resource"`에는 `"Fn::GetAtt"`를 사용해 `"StorageEfsFileSystemF296E1B3"` 리소스의 `"Arn"` 값을 가져오고 있습니다. 즉, 이 권한은 모든 EFS가 아니라 해당 EFS 파일 시스템 하나에만 적용됩니다.
