@@ -243,7 +243,7 @@ IAM Role은 특정 AWS 리소스가 다른 AWS 리소스에 접근할 수 있도
     },
 ```
 
-`"AssumeRolePolicyDocument"`는 "누가 이 IAM Role을 사용할 수 있는가"를 정의하는 정책입니다.
+`"AssumeRolePolicyDocument"`는 누가 이 IAM Role을 맡을 수 있는지를 정의하는 정책, 즉 Trust Policy를 의미합니다.
 
 `"Statement"`는 이 정책에서 하나의 규칙을 나타내는 항목입니다. `"Action"`, `"Effect"`, `"Principal"` 등을 통해 어떤 행위를 정의하는지, 그 행위를 허용할지 거부할지, 그리고 그 행위의 주체가 누구인지를 정합니다.
 
@@ -251,9 +251,12 @@ IAM Role은 특정 AWS 리소스가 다른 AWS 리소스에 접근할 수 있도
 
 `"Effect"`는 해당 행위를 허용할지 거부할지를 의미합니다. 여기서는 `"Allow"`이므로 허용한다는 뜻입니다.
 
-`"sts:AssumeRole"`에서 `"sts"`는 AWS Security Token Service를 의미하고, `"AssumeRole"`은 어떤 주체가 IAM Role을 assume(맡아 사용하는)하는 것이라고 볼 수 있습니다. 이를 통해 AWS STS는 해당 주체에게 임시 보안 자격 증명을 발급합니다. 이 임시 보안 자격 증명에는 Access Key ID, Secret Access Key, Session Token이 포함되며, 일정 시간이 지나면 만료됩니다. 따라서 해당 주체가 IAM Role을 영구적으로 소유하는 것이 아니라, 일정 시간 동안만 그 Role에 연결된 권한을 사용할 수 있습니다. 즉, 엄밀히 말하면 IAM 권한을 소유한다기보다 잠시 빌려쓴다고 볼 수 있습니다.
+`"sts:AssumeRole"`에서 `"sts"`는 AWS Security Token Service를 의미하고, `"AssumeRole"`은 어떤 주체가 IAM Role을 assume, 즉 맡아 사용하는 것을 의미합니다. 이 Role이 실제로 Assume되면 AWS STS는 해당 Role에 대한 임시 보안 자격 증명을 발급합니다. 이 임시 보안 자격 증명에는 Access Key ID, Secret Access Key, Session Token이 포함되며, 일정 시간이 지나면 만료됩니다. 따라서 해당 주체가 IAM Role 자체를 영구적으로 소유하는 것이 아니라, 일정 시간 동안만 그 Role에 연결된 권한을 임시로 사용할 수 있습니다. 즉, 엄밀히 말하면 IAM 권한을 소유한다기보다 잠시 빌려쓴다고 볼 수 있습니다.
 
-`"Principal"`은 이 IAM Role을 assume할 수 있는 주체를 뜻합니다. 여기서는 `"ecs-tasks.amazonaws.com"`가 이 IAM Role을 assume할 수 있는 주체입니다.
+`"Principal"`은 이 IAM Role을 assume할 수 있는 주체를 뜻합니다. 여기서는 `ecs-tasks.amazonaws.com`가 이 IAM Role을 assume할 수 있는 주체입니다.
+
+즉, `"Statement"`는 `ecs-tasks.amazonaws.com` 서비스가 이 IAM Role을 맡을 수 있도록 허용하며, 그 결과 AWS STS를 통해 해당 Role의 임시 자격 증명이 발급될 수 있음을 의미합니다.
+임시 자격 증명은 그 IAM Role을 assume한 주체가 받아서 사용하며, ECS Task Role의 경우 보통 컨테이너 내부 애플리케이션이 그 자격 증명을 사용합니다.
 
 ---
 
