@@ -1,40 +1,44 @@
 ---
-title: "05. 로드 밸런싱 (ALB, 리스너, 타깃 그룹)"
-weight: 5
+title: "06. ECS 권한 (IAM Roles & Policies)"
+weight: 6
 ---
-> **작성일:** 2026-04-18 | **수정일:** 2026-04-21
+> **작성일:** 2026-04-19 | **수정일:** 2026-04-21
 ```json
 {
-  "BasicALB951EEDC7": {
-   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+  "BasicRetailStoreEcsTaskExecutionRoleCAE88D2C": {
+   "Type": "AWS::IAM::Role",
    "Properties": {
-    "LoadBalancerAttributes": [
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "ECS Default Task Execution Role",
+    "ManagedPolicyArns": [
      {
-      "Key": "deletion_protection.enabled",
-      "Value": "false"
-     }
-    ],
-    "Name": "retail-store-ecs-ui",
-    "Scheme": "internet-facing",
-    "SecurityGroups": [
-     {
-      "Fn::GetAtt": [
-       "BasicALBSecurityGroupF9D92961",
-       "GroupId"
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+       ]
       ]
      }
     ],
-    "Subnets": [
-     {
-      "Ref": "BasicRetailStoreVPCPublicSubnet1SubnetF807A1C8"
-     },
-     {
-      "Ref": "BasicRetailStoreVPCPublicSubnet2Subnet3227177D"
-     },
-     {
-      "Ref": "BasicRetailStoreVPCPublicSubnet3Subnet3BE6B890"
-     }
-    ],
+    "PermissionsBoundary": {
+     "Ref": "PermissionsBoundary2D0B48CC"
+    },
+    "RoleName": "retailStoreEcsTaskExecutionRole",
     "Tags": [
      {
       "Key": "CreationDate",
@@ -48,127 +52,54 @@ weight: 5
       "Key": "WorkshopName",
       "Value": "ECSImmersionDay"
      }
-    ],
-    "Type": "application"
-   },
-   "DependsOn": [
-    "BasicRetailStoreVPCPublicSubnet1DefaultRouteA07B80E5",
-    "BasicRetailStoreVPCPublicSubnet1RouteTableAssociation109AA702",
-    "BasicRetailStoreVPCPublicSubnet2DefaultRoute687061C9",
-    "BasicRetailStoreVPCPublicSubnet2RouteTableAssociation661C9073",
-    "BasicRetailStoreVPCPublicSubnet3DefaultRoute17E6A8A5",
-    "BasicRetailStoreVPCPublicSubnet3RouteTableAssociationDA4CEA25"
-   ]
-  },
-  "BasicALBTestListener9BC91E69": {
-   "Type": "AWS::ElasticLoadBalancingV2::Listener",
-   "Properties": {
-    "DefaultActions": [
-     {
-      "ForwardConfig": {
-       "TargetGroupStickinessConfig": {
-        "DurationSeconds": 5,
-        "Enabled": true
-       },
-       "TargetGroups": [
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicGreenTargetGroup843DBE73"
-         },
-         "Weight": 0
-        },
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicBlueTargetGroup17B9FA9D"
-         },
-         "Weight": 100
-        }
-       ]
-      },
-      "Type": "forward"
-     }
-    ],
-    "LoadBalancerArn": {
-     "Ref": "BasicALB951EEDC7"
-    },
-    "Port": 8080,
-    "Protocol": "HTTP"
+    ]
    }
   },
-  "BasicALBProdListenerE1FBE213": {
-   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+  "BasicRetailStoreEcsTaskExecutionRoleDefaultPolicy6D9AFE99": {
+   "Type": "AWS::IAM::Policy",
    "Properties": {
-    "DefaultActions": [
-     {
-      "ForwardConfig": {
-       "TargetGroupStickinessConfig": {
-        "DurationSeconds": 5,
-        "Enabled": true
-       },
-       "TargetGroups": [
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicGreenTargetGroup843DBE73"
-         },
-         "Weight": 0
-        },
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicBlueTargetGroup17B9FA9D"
-         },
-         "Weight": 100
-        }
-       ]
-      },
-      "Type": "forward"
-     }
-    ],
-    "LoadBalancerArn": {
-     "Ref": "BasicALB951EEDC7"
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ecs:TagResource",
+        "logs:CreateLogGroup",
+        "ssm:GetParameters"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
     },
-    "Port": 80,
-    "Protocol": "HTTP"
+    "PolicyName": "BasicRetailStoreEcsTaskExecutionRoleDefaultPolicy6D9AFE99",
+    "Roles": [
+     {
+      "Ref": "BasicRetailStoreEcsTaskExecutionRoleCAE88D2C"
+     }
+    ]
    }
   },
-  "BasicALBManagedInstanceListener1F658A55": {
-   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+  "BasicRetailStoreEcsTaskRole14589F14": {
+   "Type": "AWS::IAM::Role",
    "Properties": {
-    "DefaultActions": [
-     {
-      "ForwardConfig": {
-       "TargetGroupStickinessConfig": {
-        "DurationSeconds": 5,
-        "Enabled": true
-       },
-       "TargetGroups": [
-        {
-         "TargetGroupArn": {
-          "Ref": "ManagedManagedInstanceTargetGroup02D05B48"
-         },
-         "Weight": 1
-        }
-       ]
-      },
-      "Type": "forward"
-     }
-    ],
-    "LoadBalancerArn": {
-     "Ref": "BasicALB951EEDC7"
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
     },
-    "Port": 8090,
-    "Protocol": "HTTP"
-   }
-  },
-  "BasicBlueTargetGroup17B9FA9D": {
-   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-   "Properties": {
-    "HealthCheckIntervalSeconds": 10,
-    "HealthCheckPath": "/actuator/health",
-    "HealthCheckTimeoutSeconds": 5,
-    "HealthyThresholdCount": 2,
-    "Name": "BlueTargetGroup",
-    "Port": 8080,
-    "Protocol": "HTTP",
+    "Description": "ECS Default Task Role",
+    "PermissionsBoundary": {
+     "Ref": "PermissionsBoundary2D0B48CC"
+    },
+    "RoleName": "retailStoreEcsTaskRole",
     "Tags": [
      {
       "Key": "CreationDate",
@@ -182,110 +113,95 @@ weight: 5
       "Key": "WorkshopName",
       "Value": "ECSImmersionDay"
      }
-    ],
-    "TargetGroupAttributes": [
-     {
-      "Key": "deregistration_delay.timeout_seconds",
-      "Value": "0"
-     },
-     {
-      "Key": "stickiness.enabled",
-      "Value": "true"
-     },
-     {
-      "Key": "stickiness.type",
-      "Value": "lb_cookie"
-     },
-     {
-      "Key": "stickiness.lb_cookie.duration_seconds",
-      "Value": "300"
-     }
-    ],
-    "TargetType": "ip",
-	    "UnhealthyThresholdCount": 3,
-    "VpcId": {
-     "Ref": "BasicRetailStoreVPC0FA21CD5"
-    }
+    ]
    }
   },
-  "BasicGreenTargetGroup843DBE73": {
-   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+  "BasicRetailStoreEcsTaskRoleDefaultPolicy9759E157": {
+   "Type": "AWS::IAM::Policy",
    "Properties": {
-    "HealthCheckIntervalSeconds": 10,
-    "HealthCheckPath": "/actuator/health",
-    "HealthCheckTimeoutSeconds": 5,
-    "HealthyThresholdCount": 2,
-    "Name": "GreenTargetGroup",
-    "Port": 8080,
-    "Protocol": "HTTP",
-    "Tags": [
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ssmmessages:CreateControlChannel",
+        "ssmmessages:CreateDataChannel",
+        "ssmmessages:OpenControlChannel",
+        "ssmmessages:OpenDataChannel"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientRootAccess",
+        "elasticfilesystem:ClientWrite"
+       ],
+       "Condition": {
+        "Bool": {
+         "elasticfilesystem:AccessedViaMountTarget": "true"
+        }
+       },
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "StorageEfsFileSystemF296E1B3",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "BasicRetailStoreEcsTaskRoleDefaultPolicy9759E157",
+    "Roles": [
      {
-      "Key": "CreationDate",
-      "Value": "2026-02-21"
-     },
-     {
-      "Key": "Version",
-      "Value": "1.0.2"
-     },
-     {
-      "Key": "WorkshopName",
-      "Value": "ECSImmersionDay"
+      "Ref": "BasicRetailStoreEcsTaskRole14589F14"
      }
-    ],
-    "TargetGroupAttributes": [
-     {
-      "Key": "deregistration_delay.timeout_seconds",
-      "Value": "0"
-     },
-     {
-      "Key": "stickiness.enabled",
-      "Value": "false"
-     }
-    ],
-    "TargetType": "ip",
-    "UnhealthyThresholdCount": 2,
-    "VpcId": {
-     "Ref": "BasicRetailStoreVPC0FA21CD5"
-    }
+    ]
    }
   }
 }
 ```
 
 ---
-## 1. `"BasicALB951EEDC7"`
+## 1. `"BasicRetailStoreEcsTaskExecutionRoleCAE88D2C"`
 
 ```json
-  "BasicALB951EEDC7": {
-   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+  "BasicRetailStoreEcsTaskExecutionRoleCAE88D2C": {
+   "Type": "AWS::IAM::Role",
    "Properties": {
-    "LoadBalancerAttributes": [
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "ECS Default Task Execution Role",
+    "ManagedPolicyArns": [
      {
-      "Key": "deletion_protection.enabled",
-      "Value": "false"
-     }
-    ],
-    "Name": "retail-store-ecs-ui",
-    "Scheme": "internet-facing",
-    "SecurityGroups": [
-     {
-      "Fn::GetAtt": [
-       "BasicALBSecurityGroupF9D92961",
-       "GroupId"
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+       ]
       ]
      }
     ],
-    "Subnets": [
-     {
-      "Ref": "BasicRetailStoreVPCPublicSubnet1SubnetF807A1C8"
-     },
-     {
-      "Ref": "BasicRetailStoreVPCPublicSubnet2Subnet3227177D"
-     },
-     {
-      "Ref": "BasicRetailStoreVPCPublicSubnet3Subnet3BE6B890"
-     }
-    ],
+    "PermissionsBoundary": {
+     "Ref": "PermissionsBoundary2D0B48CC"
+    },
+    "RoleName": "retailStoreEcsTaskExecutionRole",
     "Tags": [
      {
       "Key": "CreationDate",
@@ -299,365 +215,201 @@ weight: 5
       "Key": "WorkshopName",
       "Value": "ECSImmersionDay"
      }
-    ],
-    "Type": "application"
-   },
-   "DependsOn": [
-    "BasicRetailStoreVPCPublicSubnet1DefaultRouteA07B80E5",
-    "BasicRetailStoreVPCPublicSubnet1RouteTableAssociation109AA702",
-    "BasicRetailStoreVPCPublicSubnet2DefaultRoute687061C9",
-    "BasicRetailStoreVPCPublicSubnet2RouteTableAssociation661C9073",
-    "BasicRetailStoreVPCPublicSubnet3DefaultRoute17E6A8A5",
-    "BasicRetailStoreVPCPublicSubnet3RouteTableAssociationDA4CEA25"
-   ]
+    ]
+   }
   },
 ```
 
----
-
-ALB(Application Load Balancer)를 생성합니다.
+IAM Role을 생성합니다. ECS Task Execution Role은 ECS Task 실행에 필요한 권한을 담는 IAM Role입니다.
 
 ---
 
-`"Type": "AWS::ElasticLoadBalancingV2::LoadBalancer"`에서 `"ElasticLoadBalancingV2"`는 AWS의 로드 밸런서 서비스 중 ALB, NLB, GWLB와 같은 v2 계열을 의미합니다.
+IAM Role은 특정 AWS 리소스가 다른 AWS 리소스에 접근할 수 있도록 권한을 담는 스팟입니다.
 
 ---
 
 ```json
-    "LoadBalancerAttributes": [
-     {
-      "Key": "deletion_protection.enabled",
-      "Value": "false"
-     }
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
 ```
 
-`"LoadBalancerAttributes"`는 로드 밸런서의 속성을 설정하는 항목입니다. `"Key": "deletion_protection.enabled"`는 로드 밸런서의 삭제 보호 기능을 의미하며, `"Value": "false"`이므로 이 로드 밸런서는 삭제 보호가 비활성화된 상태로 생성됩니다. 즉 필요할 경우 별도의 보호 해제 없이 삭제할 수 있습니다.
+`"AssumeRolePolicyDocument"`는 누가 이 IAM Role을 맡을 수 있는지를 정의하는 정책, 즉 Trust Policy를 의미합니다.
 
-실습 환경이기 때문에 이 옵션은 `"false"`로 설정되었지만, 실무에서는 일반적으로 `"true"`로 설정됩니다. ALB는 애플리케이션으로 들어오는 요청의 진입점 역할을 하므로, 실수로 삭제되면 사용자 요청을 정상적으로 처리할 수 없게 됩니다. 따라서 운영 환경에서는 삭제 보호를 `"true"`로 설정하는 것이 일반적입니다.
+`"Statement"`는 이 정책에서 하나의 규칙을 나타내는 항목입니다. `"Action"`, `"Effect"`, `"Principal"` 등을 통해 어떤 행위를 정의하는지, 그 행위를 허용할지 거부할지, 그리고 그 행위의 주체가 누구인지를 정합니다.
 
----
+`"Action"`은 이 정책에서 정의하는 행위를 의미합니다.
 
-`"Scheme": "internet-facing"`은 이 로드 밸런서를 인터넷에 공개되는 형태로 만들겠다는 의미입니다. 즉 이 옵션이 설정되면 로드 밸런서 노드는 Public IP를 가지며, 외부 인터넷에서 접근이 가능하게 됩니다. 이 옵션은 ALB와 NLB에만 적용되며, GWLB(Gateway Load Balancer)에는 사용할 수 없습니다.
+`"Effect"`는 해당 행위를 허용할지 거부할지를 의미합니다. 여기서는 `"Allow"`이므로 허용한다는 뜻입니다.
+
+`"sts:AssumeRole"`에서 `"sts"`는 AWS Security Token Service를 의미하고, `"AssumeRole"`은 어떤 주체가 IAM Role을 assume, 즉 맡아 사용하는 것을 의미합니다. 이 Role이 실제로 Assume되면 AWS STS는 해당 Role에 대한 임시 보안 자격 증명을 발급합니다. 이 임시 보안 자격 증명에는 Access Key ID, Secret Access Key, Session Token이 포함되며, 일정 시간이 지나면 만료됩니다. 따라서 해당 주체가 IAM Role 자체를 영구적으로 소유하는 것이 아니라, 일정 시간 동안만 그 Role에 연결된 권한을 임시로 사용할 수 있습니다. 즉, 엄밀히 말하면 IAM 권한을 소유한다기보다 잠시 빌려쓴다고 볼 수 있습니다.
+
+`"Principal"`은 이 IAM Role을 assume할 수 있는 주체를 뜻합니다. 여기서는 `ecs-tasks.amazonaws.com`가 이 IAM Role을 assume할 수 있는 주체입니다.
+
+즉, `"Statement"`는 `ecs-tasks.amazonaws.com` 서비스가 이 IAM Role을 맡을 수 있도록 허용하며, 그 결과 AWS STS를 통해 해당 Role의 임시 자격 증명이 발급될 수 있음을 의미합니다.
+임시 자격 증명은 해당 IAM Role을 assume한 주체가 받아서 사용합니다. Execution Role의 경우 ECS가 Task 실행 과정에서 이를 사용하고, Task Role의 경우 보통 컨테이너 내부 애플리케이션이 이를 사용합니다.
 
 ---
 
 ```json
-    "SecurityGroups": [
+    "ManagedPolicyArns": [
      {
-      "Fn::GetAtt": [
-       "BasicALBSecurityGroupF9D92961",
-       "GroupId"
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+       ]
       ]
      }
     ],
 ```
 
-전에 만든 보안 그룹을 이 로드 밸런서에 연결합니다. `"Fn::GetAtt"`는 앞서 생성한 보안 그룹 리소스에서 `GroupId` 값을 가져오기 위해 사용됩니다. 즉 보안 그룹 자체를 넘기는 것이 아니라, 그 보안 그룹의 ID를 참조해서 연결하는 것입니다.
+`"ManagedPolicyArns"`는 AWS가 미리 만들어 둔 관리형 IAM Policy를 이 IAM Role에 붙이는 부분입니다. IAM Role이 권한을 담는 스팟(주머니)이라면, IAM Policy는 실제 권한을 정의한 문서라고 볼 수 있습니다.
 
-참고로 이 보안 그룹은 `"VpcId"`가 지정되어 있으므로, 여기서는 `"Ref"`를 사용해도 동일하게 `"GroupId"`를 가져올 수 있습니다. 여기서 `"VpcId"`는 반환되는 값이 아니라, `"Ref"`가 무엇을 반환할지 결정하는 조건입니다. `"AWS::EC2::SecurityGroup"` 리소스는 `"VpcId"`가 지정된 경우 `"Ref"`가 `"GroupId"`를 반환합니다. 또한 `"GroupId"`는 CloudFormation 템플릿에 직접 작성되는 값이 아니라, AWS가 보안 그룹을 생성할 때 자동으로 부여하는 식별자입니다.
+`"Ref": "AWS::Partition"`은 현재 CloudFormation 스택이 배포되는 AWS 파티션 값을 참조하는 부분입니다. AWS 파티션은 리전보다 상위의 구분 단위이며, 이를 사용하면 ARN을 하드코딩하지 않고 현재 환경에 맞게 생성할 수 있습니다. 일반적인 상용 AWS 리전에서는 보통 `"aws"`가 들어가며, AWS 파티션 값으로는 `"aws"`, `"aws-cn"`, `"aws-us-gov"` 등이 있습니다.
+
+`"Fn::Join"`로 여러 문자열을 이어 붙여 `"AmazonECSTaskExecutionRolePolicy"`의 ARN을 생성합니다. `"AmazonECSTaskExecutionRolePolicy"`는 AWS가 미리 만들어 둔, ECS Task 실행 과정에서 ECS/Fargate가 사용자 대신 필요한 AWS API를 호출할 수 있게 하는 권한을 정의한 Managed Policy입니다. 주로 ECS/Fargate가 사용자 대신 이미지 풀이나 로그 전송 등 실행 과정에서 AWS API를 호출할 때 사용하는 권한입니다.
 
 ---
 
 ```json
-    "Subnets": [
-     {
-      "Ref": "BasicRetailStoreVPCPublicSubnet1SubnetF807A1C8"
-     },
-     {
-      "Ref": "BasicRetailStoreVPCPublicSubnet2Subnet3227177D"
-     },
-     {
-      "Ref": "BasicRetailStoreVPCPublicSubnet3Subnet3BE6B890"
-     }
-    ],
+    "PermissionsBoundary": {
+     "Ref": "PermissionsBoundary2D0B48CC"
+    },
 ```
 
-로드 밸런서가 3개의 퍼블릭 서브넷을 참조합니다.
-
-로드 밸런서는 여러 AZ에 걸쳐 배치됩니다. 정확히는 활성화된 각 AZ에 로드 밸런서 노드가 생성되며, 각 노드는 해당 서브넷에서 자신의 ENI를 통해 네트워크 통신을 수행합니다. 사용자는 DNS를 통해 이 노드들 중 하나로 요청을 보내고, 요청을 받은 노드가 이를 수신해 처리합니다. 이후 로드 밸런서는 리스너(Listener)와 규칙(Rule)에 따라 적절한 타깃을 선택해 요청을 전달합니다. 또한 기본적으로 cross-zone load balancing이 적용되므로, 요청은 같은 AZ 또는 다른 AZ의 타깃 그룹에 등록된 타깃으로 전달될 수 있습니다.
+`"PermissionsBoundary"`는 이 IAM Role에 붙은 IAM Policy들이 부여할 수 있는 최대 권한 범위를 제한하는 설정입니다. 여기서는 `"PermissionsBoundary2D0B48CC"`를 참조해 그 경계선을 설정합니다.
 
 ---
 
-`"Type": "application"`은 이 로드밸런서가 ALB(Application Load Balancer)라는 것을 알려줍니다.
+`"RoleName"` - 이 권한 스팟(IAM Role)의 이름입니다.
+
+요약하면, 이 코드는 ECS Task가 사용할 IAM Role을 만들고, 그 Role에 AWS가 미리 만들어 둔 관리형 권한 문서를 붙이며, `"PermissionsBoundary"`로 그 Role이 가질 수 있는 최대 권한 범위를 제한하는 코드입니다. `"AssumeRolePolicyDocument"`는 어떤 주체가 이 IAM Role을 사용할 수 있는지를 정하고, 여기서는 `ecs-tasks.amazonaws.com`, 즉 ECS Task가 그 대상입니다. `"ManagedPolicyArns"`는 이 Role에 붙일 실제 권한 문서를 지정하는 부분이며, `Fn::Join`과 `"AWS::Partition"`을 사용해 `"AmazonECSTaskExecutionRolePolicy"`의 ARN을 환경에 맞게 생성합니다. 마지막으로 `"PermissionsBoundary"`는 이 Role에 Policy가 붙더라도 실제로는 어디까지 권한을 가질 수 있는지를 제한하는 경계선 역할을 합니다.
+
+- `"AWS::IAM::Role"` - 권한 스팟 자체
+- `"AssumeRolePolicyDocument"` - 어떤 주체가 이 권한 스팟(IAM Role)을 사용할 수 있는지 정하는 규칙
+- `"ManagedPolicyArns"` - 이 권한 스팟(IAM Role)에 붙일 실제 권한 문서(IAM Policy)들 목록
+- `"PermissionsBoundary"` - 붙인 권한(IAM Policy)이 있더라도 실제로는 여기까지만 가능하다는 상한선
+- `"RoleName"` - 이 권한 스팟의 이름
+- `"Principal"` - 이 권한 스팟을 사용할 수 있는 주체
+- `"Action": "sts:AssumeRole"` - 그 주체가 이 권한 스팟을 맡아 쓰는 동작
+- `"Effect": "Allow"` - 그 동작을 허용함
 
 ---
-
-## 2. `"BasicALBTestListener9BC91E69"`
+## 2. `"BasicRetailStoreEcsTaskExecutionRoleDefaultPolicy6D9AFE99"`
 
 ```json
-  "BasicALBTestListener9BC91E69": {
-   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+  "BasicRetailStoreEcsTaskExecutionRoleDefaultPolicy6D9AFE99": {
+   "Type": "AWS::IAM::Policy",
    "Properties": {
-    "DefaultActions": [
-     {
-      "ForwardConfig": {
-       "TargetGroupStickinessConfig": {
-        "DurationSeconds": 5,
-        "Enabled": true
-       },
-       "TargetGroups": [
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicGreenTargetGroup843DBE73"
-         },
-         "Weight": 0
-        },
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicBlueTargetGroup17B9FA9D"
-         },
-         "Weight": 100
-        }
-       ]
-      },
-      "Type": "forward"
-     }
-    ],
-    "LoadBalancerArn": {
-     "Ref": "BasicALB951EEDC7"
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ecs:TagResource",
+        "logs:CreateLogGroup",
+        "ssm:GetParameters"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
     },
-    "Port": 8080,
-    "Protocol": "HTTP"
+    "PolicyName": "BasicRetailStoreEcsTaskExecutionRoleDefaultPolicy6D9AFE99",
+    "Roles": [
+     {
+      "Ref": "BasicRetailStoreEcsTaskExecutionRoleCAE88D2C"
+     }
+    ]
    }
   },
 ```
 
-로드 밸런서의 테스트 리스너를 생성합니다. 리스너는 지정된 프로토콜과 포트로 들어오는 클라이언트 요청을 수신합니다. 그 후 등록된 규칙(Rule)을 순서대로 평가하여 적합한 타깃 그룹으로 트래픽을 전달합니다.
+IAM Policy를 생성합니다. `"EcsTaskExecutionRoleDefaultPolicy"`는 ECS Task 실행에 필요한 권한을 정의한 IAM Policy입니다.
 
-리스너(Listener)와 규칙(Rule) 예시입니다.
-
-```
-ALB
-└── 리스너 (HTTP:80)
-    ├── 규칙 1: /api/* → Target Group A
-    ├── 규칙 2: /images/* → Target Group B
-    └── 기본 규칙 (Default): → Target Group C
-```
-
----
-
-`"DefaultActions"`는 이 리스너에 들어온 요청을 기본적으로 어떻게 처리할지를 정의하는 설정입니다.
+`"BasicRetailStoreEcsTaskExecutionRoleCAE88D2C"`는 IAM Role 자체입니다. 이 IAM Role에는 앞서 Managed Policy가 붙었고, 여기서 정의한 IAM Policy도 `"Roles"` 속성을 통해 같은 IAM Role에 추가로 붙습니다.
 
 ---
 
 ```json
-      "ForwardConfig": {
-       "TargetGroupStickinessConfig": {
-        "DurationSeconds": 5,
-        "Enabled": true
-       },
-       "TargetGroups": [
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicGreenTargetGroup843DBE73"
-         },
-         "Weight": 0
-        },
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicBlueTargetGroup17B9FA9D"
-         },
-         "Weight": 100
-        }
-       ]
-      },
+     "Statement": [
+      {
+       "Action": [
+        "ecs:TagResource",
+        "logs:CreateLogGroup",
+        "ssm:GetParameters"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
 ```
 
-`"ForwardConfig"`는 `forward` 동작을 어떻게 할지 정하는 설정입니다. `forward` 동작은 리스너가 받은 요청을 타깃 그룹으로 전달하는 동작입니다. 
+`"Statement"`는 이 정책의 개별 규칙입니다. 
 
-`"TargetGroupStickinessConfig"`는 같은 클라이언트의 요청을 일정 시간 동안 같은 타깃 그룹으로 유지하도록 하는 설정입니다. `"DurationSeconds"`는 그 유지 시간을 의미하고, `"Enabled": true`는 이 설정이 활성화되어 있음을 뜻합니다.
+`"Action"`은 이 정책이 허용할 AWS 작업 목록입니다.
+
+`"ecs:TagResource"`는 ECS 리소스에 태그를 붙일 수 있다는 것을 의미합니다. 리소스에 태그가 붙으면 동일한 태그를 가진 리소스를 한 번에 필터링할 수 있기 때문에 리소스들의 관리가 편해집니다. 
+
+`"logs:CreateLogGroup"`는 CloudWatch Logs의 로그 그룹을 만들 수 있음을 의미합니다. 
+
+`"ssm"`은 AWS Systems Manager를 의미합니다.
+
+AWS Systems Manager는 관리 대상인 EC2 인스턴스나 다른 리소스들을 중앙에서 관리하는 서비스입니다. 이 글에서는 ECS Task와 관련된 권한을 설명하고 있으므로, Systems Manager가 컨테이너와 연결되거나 명령 전달에 관여하는 상황도 함께 등장할 수 있습니다. 다만 Systems Manager가 컨테이너를 직접 대신 실행하는 것은 아니며, 실제 명령 실행은 컨테이너 내부에서 이루어집니다. 사용자가 입력한 명령은 Systems Manager가 받아 Systems Manager의 세션 채널을 통해 컨테이너로 전달하고, 실제 명령 실행은 컨테이너 내부에서 이루어집니다.
+
+`"ssm:GetParameters"`는 Systems Manager의 Parameter Store 기능에 저장된 파라미터 값을 읽어올 수 있음을 의미합니다. ECS Task 실행 과정에서 task definition이 Parameter Store의 값을 참조하는 경우 이 권한이 필요할 수 있습니다.
+
+`"Resource": "*"`는 `"Action"`의 대상이 되는 리소스를 모든 리소스로 지정한다는 뜻입니다. 즉, 특정 리소스로 대상을 제한하지 않겠다는 의미입니다.
 
 ---
 
 ```json
-       "TargetGroups": [
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicGreenTargetGroup843DBE73"
-         },
-         "Weight": 0
-        },
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicBlueTargetGroup17B9FA9D"
-         },
-         "Weight": 100
-        }
-       ]
-```
-
-`"TargetGroups"`는 리스너가 요청을 어느 타깃 그룹으로 전달할지 정하는 설정입니다.
-
-`"TargetGroupArn"`은 이 리스너가 요청을 전달할 타깃 그룹의 ARN입니다. ARN은 Amazon Resource Name의 약자로, AWS에서 리소스를 고유하게 식별하는 전체 이름입니다. 예를 들면 `"arn:aws:elasticloadbalancing:ap-northeast-2:123456789012:targetgroup/BlueTargetGroup/abc123"` 같은 값입니다.
-
-여기서는 `"BasicGreenTargetGroup843DBE73"`와 `"BasicBlueTargetGroup17B9FA9D"`가 두 타깃 그룹을 참조합니다.
-
-`"Weight"`는 해당 타깃 그룹으로 요청을 얼마나 보낼지를 나타내는 값입니다. 여기서는 `"BasicGreenTargetGroup843DBE73"`의 `"Weight"`가 `0`이고 `"BasicBlueTargetGroup17B9FA9D"`의 `"Weight"`가 `100`이기 때문에, 모든 트래픽이 `"BasicBlueTargetGroup17B9FA9D"`로 전달됩니다.
-
-이 타깃 그룹은 추후 블루/그린 배포를 위한 것으로 보입니다. 블루/그린 배포는 기존 버전과 새 버전을 각각 다른 타깃 그룹에 두고, 새 버전이 정상적으로 동작하는지 확인한 뒤 트래픽을 전환하는 방식입니다. 보통 기존 운영 환경은 Blue 타깃 그룹에 두고, 업데이트된 컨테이너는 Green 타깃 그룹에 배치합니다. 이후 Green 쪽이 정상 작동하는 것이 확인되면 요청을 Green 쪽으로 전환하고, 문제가 생기면 다시 Blue 쪽으로 요청을 돌릴 수 있습니다. 롤링 업데이트와는 구성이 다르며, 블루/그린 배포에서는 상황에 따라 트래픽을 한 번에 전환할 수도 있고, 가중치를 조정해 점진적으로 전환할 수도 있습니다.
-
----
-
-`"Type": "forward"`는 이 리스너가 받은 요청을 타깃 그룹으로 전달하도록 설정되어 있다는 뜻입니다. 리스너는 일반적으로 받은 요청을 타깃 그룹으로 전달하지만, `"redirect"`를 사용하면 다른 URL이나 포트로 리다이렉트할 수 있고, `"fixed-response"`를 사용하면 정해진 응답을 바로 반환할 수도 있습니다. 
-
-예를 들면, `80`번 포트로 들어온 `HTTP` 트래픽을 `HTTPS`인 `443`번 포트로 리다이렉트해서 추후 일어날 통신을 `HTTPS`로 하게 만들거나, `naver.com`으로 온 요청을 `www.naver.com`으로 보내는 등의 리다이렉트가 필요할 수 있습니다.  반면 `"fixed-response"`는 `404 Not Found` 같은 응답을 타깃 그룹으로 전달하지 않고 ALB가 직접 반환할 때 사용합니다.
-
----
-
-```json
-    "LoadBalancerArn": {
-     "Ref": "BasicALB951EEDC7"
-    },
-```
-
-로드 밸런서에 이 리스너를 연결합니다.
-
----
-
-```json
-    "Port": 8080,
-    "Protocol": "HTTP"
-   }
-```
-
-이 리스너는 ALB의 `8080`번 포트로 들어오는 `HTTP` 요청을 받으며, 해당 요청에 대해 `"DefaultActions"`에 정의된 동작을 수행합니다. 
-
----
-
-## 3. `"BasicALBProdListenerE1FBE213"`
-
-```json
-  "BasicALBProdListenerE1FBE213": {
-   "Type": "AWS::ElasticLoadBalancingV2::Listener",
-   "Properties": {
-    "DefaultActions": [
+    "Roles": [
      {
-      "ForwardConfig": {
-       "TargetGroupStickinessConfig": {
-        "DurationSeconds": 5,
-        "Enabled": true
-       },
-       "TargetGroups": [
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicGreenTargetGroup843DBE73"
-         },
-         "Weight": 0
-        },
-        {
-         "TargetGroupArn": {
-          "Ref": "BasicBlueTargetGroup17B9FA9D"
-         },
-         "Weight": 100
-        }
-       ]
-      },
-      "Type": "forward"
+      "Ref": "BasicRetailStoreEcsTaskExecutionRoleCAE88D2C"
      }
-    ],
-    "LoadBalancerArn": {
-     "Ref": "BasicALB951EEDC7"
-    },
-    "Port": 80,
-    "Protocol": "HTTP"
-   }
-  },
 ```
 
----
-
-이 리스너는 앞서 살펴본 리스너와 거의 동일한 설정을 가지고 있습니다.
+이 IAM Policy를 IAM Role에 연결합니다.
 
 ---
+## 3. `"BasicRetailStoreEcsTaskRole14589F14"`
 
 ```json
-    "Port": 80,
-    "Protocol": "HTTP"
-   }
-```
-
-이 리스너는 ALB의 `80`번 포트로 들어오는 `HTTP` 요청을 받으며, 해당 요청을 `"DefaultActions"`에 정의된 설정에 따라 타깃 그룹으로 전달합니다.
-
----
-
-## 4. `"BasicALBManagedInstanceListener1F658A55"`
-
-```json
-  "BasicALBManagedInstanceListener1F658A55": {
-   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+  "BasicRetailStoreEcsTaskRole14589F14": {
+   "Type": "AWS::IAM::Role",
    "Properties": {
-    "DefaultActions": [
-     {
-      "ForwardConfig": {
-       "TargetGroupStickinessConfig": {
-        "DurationSeconds": 5,
-        "Enabled": true
-       },
-       "TargetGroups": [
-        {
-         "TargetGroupArn": {
-          "Ref": "ManagedManagedInstanceTargetGroup02D05B48"
-         },
-         "Weight": 1
-        }
-       ]
-      },
-      "Type": "forward"
-     }
-    ],
-    "LoadBalancerArn": {
-     "Ref": "BasicALB951EEDC7"
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
     },
-    "Port": 8090,
-    "Protocol": "HTTP"
-   }
-  },
-```
-
----
-
-이 리스너 역시 앞서 살펴본 리스너들과 거의 동일한 설정을 가지고 있습니다.
-
----
-
-```json
-       "TargetGroups": [
-        {
-         "TargetGroupArn": {
-          "Ref": "ManagedManagedInstanceTargetGroup02D05B48"
-         },
-         "Weight": 1
-        }
-       ]
-```
-
-이 리스너에는 하나의 타깃 그룹만 연결되어 있으며, `"ManagedManagedInstanceTargetGroup02D05B48"`을 참조하고 있습니다.
-
----
-
-```json
-    "Port": 8090,
-    "Protocol": "HTTP"
-   }
-```
-
-이 리스너는 ALB의 `8090`번 포트로 들어오는 `HTTP` 요청을 받아, `"DefaultActions"`에 정의된 설정에 따라 해당 타깃 그룹으로 전달합니다.
-
----
-
-## 5. `"BasicBlueTargetGroup17B9FA9D"`
-
-```json
-  "BasicBlueTargetGroup17B9FA9D": {
-   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-   "Properties": {
-    "HealthCheckIntervalSeconds": 10,
-    "HealthCheckPath": "/actuator/health",
-    "HealthCheckTimeoutSeconds": 5,
-    "HealthyThresholdCount": 2,
-    "Name": "BlueTargetGroup",
-    "Port": 8080,
-    "Protocol": "HTTP",
+    "Description": "ECS Default Task Role",
+    "PermissionsBoundary": {
+     "Ref": "PermissionsBoundary2D0B48CC"
+    },
+    "RoleName": "retailStoreEcsTaskRole",
     "Tags": [
      {
       "Key": "CreationDate",
@@ -671,169 +423,188 @@ ALB
       "Key": "WorkshopName",
       "Value": "ECSImmersionDay"
      }
-    ],
-    "TargetGroupAttributes": [
-     {
-      "Key": "deregistration_delay.timeout_seconds",
-      "Value": "0"
-     },
-     {
-      "Key": "stickiness.enabled",
-      "Value": "true"
-     },
-     {
-      "Key": "stickiness.type",
-      "Value": "lb_cookie"
-     },
-     {
-      "Key": "stickiness.lb_cookie.duration_seconds",
-      "Value": "300"
-     }
-    ],
-    "TargetType": "ip",
-    "UnhealthyThresholdCount": 3,
-    "VpcId": {
-     "Ref": "BasicRetailStoreVPC0FA21CD5"
-    }
+    ]
    }
   },
 ```
 
-로드 밸런서의 타깃 그룹을 생성합니다.
-
----
-
-`"HealthCheckIntervalSeconds": 10`은 로드 밸런서가 타깃 그룹에 등록된 각 타깃에 대해 `10`초마다 헬스 체크(Health Check)를 수행한다는 뜻입니다.
-
----
-
-헬스 체크란 로드 밸런서가 트래픽을 전달하는 타깃 그룹의 타깃들이 정상적으로 작동하는지 확인하는 작업입니다. 이를 위해 로드 밸런서는 각 타깃에 헬스 체크 요청을 주기적으로 보내고, 그 응답을 바탕으로 정상 여부를 판단합니다.
-
----
-
-`"HealthCheckPath": "/actuator/health"`는 로드 밸런서가 헬스 체크 요청을 보낼 URL 경로입니다. 이 타깃 그룹은 타깃에 `8080`번 포트로 `HTTP` 헬스 체크 요청을 보내도록 설정되어 있으므로, 실제 헬스 체크 요청은 보통 `http://타깃IP:8080/actuator/health` 형태로 전송된다고 볼 수 있습니다.
-
----
-
-`"HealthCheckTimeoutSeconds": 5`는 로드 밸런서가 헬스 체크 요청을 보낸 뒤 최대 5초까지 기다린다는 뜻입니다. 만약 5초 이내에 로드 밸런서가 응답을 받지 못한다면, 이 헬스 체크 요청은 실패한 것으로 간주합니다. 
-
----
-
-`"HealthyThresholdCount": 2`는 헬스 체크에 2번 연속 성공해야 해당 타깃을 정상 상태(Healthy)로 판단하겠다는 뜻입니다. 한 번 헬스 체크에 성공했다고 해서 해당 타깃을 바로 정상 타깃으로 판단하기는 이르기 때문에, 연속적으로 헬스 체크에 성공해야 해당 타깃을 정상 타깃으로 판단합니다.
+IAM Role을 생성합니다. ECS Task Role은 ECS Task 안에서 실행되는 애플리케이션 컨테이너가 사용하는 IAM Role입니다. ECS Task Role은 개별 컨테이너에 직접 부여되는 IAM Role이 아니라, ECS Task에 부여되는 IAM Role입니다. 따라서 해당 Task 안에서 실행되는 컨테이너는 이 Role의 임시 자격 증명을 사용할 수 있습니다.
 
 ---
 
 ```json
-    "Name": "BlueTargetGroup",
-    "Port": 8080,
-    "Protocol": "HTTP",
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
 ```
 
-이 타깃 그룹(`"BlueTargetGroup"`)에 등록된 타깃들은 기본적으로 `8080`번 포트에서 `HTTP` 요청을 받습니다.
+첫 번째 IAM Role(`"BasicRetailStoreEcsTaskExecutionRoleCAE88D2C"`)와 동일한 `"AssumeRolePolicyDocument"`를 가집니다. 즉, ECS Task가 이 IAM Role을 assume(맡아 사용)할 수 있습니다. 다만 첫 번째 IAM Role은 ECS Task 실행 과정에서 ECS가 사용하는 Execution Role이고, 이 IAM Role은 Task 안에서 실행되는 애플리케이션 컨테이너가 사용하는 Task Role이라는 차이가 있습니다.
+
+---
+## 4. `"BasicRetailStoreEcsTaskRoleDefaultPolicy9759E157"`
+
+```json
+  "BasicRetailStoreEcsTaskRoleDefaultPolicy9759E157": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ssmmessages:CreateControlChannel",
+        "ssmmessages:CreateDataChannel",
+        "ssmmessages:OpenControlChannel",
+        "ssmmessages:OpenDataChannel"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientRootAccess",
+        "elasticfilesystem:ClientWrite"
+       ],
+       "Condition": {
+        "Bool": {
+         "elasticfilesystem:AccessedViaMountTarget": "true"
+        }
+       },
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "StorageEfsFileSystemF296E1B3",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "BasicRetailStoreEcsTaskRoleDefaultPolicy9759E157",
+    "Roles": [
+     {
+      "Ref": "BasicRetailStoreEcsTaskRole14589F14"
+     }
+    ]
+   }
+  }
+```
+
+IAM Policy를 생성합니다. 앞선 IAM Role(`"BasicRetailStoreEcsTaskRole14589F14"`)에 추가하는 IAM Policy입니다.
 
 ---
 
 ```json
-    "TargetGroupAttributes": [
-     {
-      "Key": "deregistration_delay.timeout_seconds",
-      "Value": "0"
-     },
-     {
-      "Key": "stickiness.enabled",
-      "Value": "true"
-     },
-     {
-      "Key": "stickiness.type",
-      "Value": "lb_cookie"
-     },
-     {
-      "Key": "stickiness.lb_cookie.duration_seconds",
-      "Value": "300"
-     }
-    ],
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ssmmessages:CreateControlChannel",
+        "ssmmessages:CreateDataChannel",
+        "ssmmessages:OpenControlChannel",
+        "ssmmessages:OpenDataChannel"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
 ```
 
-`"TargetGroupAttributes"`는 타깃 그룹의 세부 동작 속성을 정의합니다.
+이 `"PolicyDocument"`에 포함된 첫 번째 권한은 ECS Task 안의 컨테이너가 AWS Systems Manager와 통신하는 데 필요한 `"ssmmessages"` 관련 작업을 허용합니다.
 
-`"deregistration_delay.timeout_seconds"`는 타깃이 타깃 그룹에서 제외될 때, 해당 타깃에 이미 들어와 있던 요청을 끝낼 시간을 설정하는 옵션입니다. 타깃이 자신에게 온 요청을 처리하는 도중에 타깃 그룹에서 제외되면, 기존 요청이 아직 처리 중일 수 있습니다. 이 속성은 그때 기존 요청을 얼마나 더 처리하게 둘지를 설정합니다. 여기서는 `"Value": "0"`이므로, 대기 시간 없이 타깃을 즉시 제외(deregistration을 진행)합니다.
+AWS Systems Manager에는 Parameter Store 외에도 Session Manager 기능이 있습니다.
 
-`"stickiness.enabled"`는 스티키(Sticky) 세션을 사용할지 여부를 정하는 옵션입니다. 스티키 세션은 같은 클라이언트의 요청이 일정 시간 동안 같은 타깃으로 전달되도록 하는 기능입니다. 로드 밸런서는 원래 요청이 들어올 때마다 여러 타깃에 트래픽을 고르게 분산하려고 하지만, 이 설정을 사용하면 한 사용자의 여러 요청을 같은 타깃으로 연속해서 전달할 수 있습니다. 여기서는 값이 `"true"`이므로 스티키 세션이 활성화됩니다.
+`"ssmmessages"`는 AWS Systems Manager의 세션 통신에서 메시지/채널 연결에 사용되는 API 네임스페이스입니다. `"CreateControlChannel"`에서 `"ControlChannel"`은 명령과 제어 신호가 오가는 제어 채널을 의미합니다. 따라서 `"ssmmessages:CreateControlChannel"`은 ECS 태스크 내부의 컨테이너가 Systems Manager와 제어 메시지를 주고받기 위한 제어 채널을 생성할 수 있음을 의미합니다.
 
-`"stickiness.type"`은 스티키 세션의 방식을 결정하는 옵션입니다. `"lb_cookie"`는 Load Balancer Cookie의 줄임말로, 로드 밸런서가 발급한 쿠키를 이용해 스티키 세션을 유지하겠다는 뜻입니다. 로드 밸런서 쿠키는 로드 밸런서가 클라이언트에 발급하는 쿠키로, 클라이언트와 특정 타깃의 연결 관계를 일정 시간 동안 기억하는 역할을 합니다. 이를 통해 같은 클라이언트의 요청을 일정 시간 동안 같은 타깃으로 계속 보낼 수 있습니다.
+`"ssmmessages:CreateDataChannel"`는 데이터 메시지를 위한 데이터 채널을 생성할 수 있음을 의미합니다.  
 
-`"stickiness.lb_cookie.duration_seconds"`는 로드 밸런서 쿠키 기반 스티키 세션을 몇 초 동안 유지할지 정하는 옵션입니다. 값이 300이기 때문에 300초 뒤에 스티키 세션이 만료됩니다.
+제어 메시지와 데이터 메시지의 차이는, 제어 메시지는 연결과 실행을 지시하는 메시지고, 데이터 메시지는 그 연결과 실행 과정에서 입력값, 출력값, 실행 결과처럼 실제로 전달되는 내용을 담은 메시지입니다. 
+
+예를 들면, 사용자가 ECS 안의 컨테이너에 접속해 `ls` 명령어를 입력하면, Systems Manager가 이를 컨테이너로 전달하는 상황을 생각해볼 수 있습니다. 이때 “세션을 열어라”, “채널을 만들어라”, “`ls`를 실행해라” 같은 지시는 제어 메시지에 해당합니다. 반면 `ls` 실행 후 화면에 출력된 파일 목록, 입력한 명령어, 명령 실행 결과로 전달되는 실제 출력 내용은 데이터 메시지에 해당합니다.
+
+`"ssmmessages:OpenControlChannel"`은 컨테이너가 Systems Manager와 제어 메시지를 주고받을 수 있도록 하는 제어 채널을 실제로 여는 권한입니다. 앞서 `"ssmmessages:CreateControlChannel"`이 제어 채널을 생성하는 권한이라면, `"ssmmessages:OpenControlChannel"`은 이렇게 생성된 채널을 실제 연결 상태로 여는 권한입니다.
+
+`"ssmmessages:OpenDataChannel"`은 `"ssmmessages:CreateDataChannel"`로 생성한 데이터 채널을 실제로 열어, Systems Manager와 데이터 입출력을 주고받을 수 있게 하는 권한입니다.
+
+정리하자면:
+
+- `"ssmmessages:CreateControlChannel"` → 제어 채널 생성
+- `"ssmmessages:OpenControlChannel"` → 생성된 제어 채널 열기
+- `"ssmmessages:CreateDataChannel"` → 데이터 채널 생성
+- `"ssmmessages:OpenDataChannel"` → 생성된 데이터 채널 열기
 
 ---
 
-`"TargetType": "ip"`는 로드 밸런서가 인스턴스의 ID가 아니라 타깃으로 등록된 리소스의 IP 주소를 기준으로 타깃을 식별하고 요청을 전달한다는 뜻입니다. `"TargetType"`의 종류로는 `"ip"`, `"instance"`, `"lambda"`, `"alb"`가 있습니다.
+`"Resource"`의 값에는 보통 특정 AWS 리소스의 ARN처럼, 권한의 대상을 식별하는 값이 들어갑니다. 하지만 이 경우에는 특정 리소스 하나를 지정하는 방식으로 권한 대상을 표현하는 것이 적절하지 않기 때문에 `"Resource": "*"`로 설정합니다. 
 
-ECS에서 `awsvpc` 네트워크 모드를 사용하는 경우에는, 각 Task가 자체적인 IP 주소를 가지므로 로드 밸런서는 EC2 인스턴스가 아니라 각 Task의 IP 주소를 타깃으로 바라봐야 합니다. 따라서 `"TargetType": "ip"`를 사용해야 합니다. `awsvpc`는 ECS Task마다 VPC 네트워크를 직접 붙여주는 네트워크 모드입니다. 최근 ECS 환경에서 많이 사용되는 방식입니다.
-
-`"UnhealthyThresholdCount": 3`는 헬스 체크에 연속으로 3번 실패해야 해당 타깃을 비정상 상태(Unhealthy)로 간주하겠다는 의미입니다.
-
----
-## 6. `"BasicGreenTargetGroup843DBE73"`
-
-```json
-  "BasicGreenTargetGroup843DBE73": {
-   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-   "Properties": {
-    "HealthCheckIntervalSeconds": 10,
-    "HealthCheckPath": "/actuator/health",
-    "HealthCheckTimeoutSeconds": 5,
-    "HealthyThresholdCount": 2,
-    "Name": "GreenTargetGroup",
-    "Port": 8080,
-    "Protocol": "HTTP",
-    "Tags": [
-     {
-      "Key": "CreationDate",
-      "Value": "2026-03-31"
-     },
-     {
-      "Key": "Version",
-      "Value": "1.0.4"
-     },
-     {
-      "Key": "WorkshopName",
-      "Value": "ECSImmersionDay"
-     }
-    ],
-    "TargetGroupAttributes": [
-     {
-      "Key": "deregistration_delay.timeout_seconds",
-      "Value": "0"
-     },
-     {
-      "Key": "stickiness.enabled",
-      "Value": "false"
-     }
-    ],
-    "TargetType": "ip",
-    "UnhealthyThresholdCount": 2,
-    "VpcId": {
-     "Ref": "BasicRetailStoreVPC0FA21CD5"
-    }
-   }
-  },
-```
-
-이전 타깃 그룹과 비슷한 설정을 가지고 있습니다.
+IAM에서는 권한을 지정할 때 무엇을 할 수 있는지와 어떤 대상을 상대로 할 수 있는지를 나누어 설정합니다. 여기서 `"ssmmessages:CreateControlChannel"`, `"ssmmessages:CreateDataChannel"`, `"ssmmessages:OpenControlChannel"`, `"ssmmessages:OpenDataChannel"`은 특정 리소스를 뜻하는 것이 아니라, 허용할 작업을 나타내는 `"Action"`입니다. IAM에서는 어떤 작업이 특정 리소스 ARN 단위로 권한 대상을 지정할 수 없는 경우 `"Resource"`에 `"*"`를 사용합니다. 여기서 사용된 `"ssmmessages"` 관련 작업들은 리소스 수준 권한 지정을 지원하지 않기 때문에 `"Resource": "*"`로 설정합니다.
 
 ---
 
 ```json
-    "TargetGroupAttributes": [
-     {
-      "Key": "deregistration_delay.timeout_seconds",
-      "Value": "0"
-     },
-     {
-      "Key": "stickiness.enabled",
-      "Value": "false"
-     }
-    ],
+      {
+       "Action": [
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientRootAccess",
+        "elasticfilesystem:ClientWrite"
+       ],
+       "Condition": {
+        "Bool": {
+         "elasticfilesystem:AccessedViaMountTarget": "true"
+        }
+       },
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "StorageEfsFileSystemF296E1B3",
+         "Arn"
+        ]
+       }
+      }
 ```
 
-`"stickiness.enabled"`가 `"false"`로 설정되어 있으므로 스티키 세션이 활성화되지 않습니다. 따라서 같은 클라이언트의 요청이 특정 타깃에 계속 고정되지 않습니다. `"GreenTargetGroup"`이라는 이름으로 보아 새 애플리케이션 버전용 타깃 그룹일 가능성이 있으며, 테스트와 검증을 위해 이런 설정을 사용했을 수 있습니다.
+이 `"PolicyDocument"`에 포함된 두 번째 권한은 ECS Task 안의 컨테이너가 특정 EFS 파일 시스템을 마운트하고 사용할 수 있도록 허용합니다.
+
+---
+
+```json
+       "Action": [
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientRootAccess",
+        "elasticfilesystem:ClientWrite"
+       ],
+```
+
+`"elasticfilesystem:ClientMount"`는 EFS 파일 시스템을 마운트할 수 있음을, `"elasticfilesystem:ClientRootAccess"`는 EFS에 root 사용자로 접근할 수 있음을, `"elasticfilesystem:ClientWrite"`는 파일을 쓸 수 있음을 의미합니다.
+
+---
+
+```json
+       "Condition": {
+        "Bool": {
+         "elasticfilesystem:AccessedViaMountTarget": "true"
+        }
+       },
+```
+
+`"Condition"`은 이 권한이 적용되는 조건을 의미합니다. 여기서는 `"elasticfilesystem:AccessedViaMountTarget": "true"`로 설정되어 있으므로, 해당 EFS 파일 시스템에 대한 접근은 EFS Mount Target을 통한 정상적인 마운트 방식일 때만 허용됩니다. 이 마운트 방식은 EFS를 네트워크 드라이브처럼 직접 붙여서 사용하는 기본 방식입니다. 참고로 EFS에 접근할 때는 정해진 경로와 사용자 규칙을 강제로 적용하는 전용 진입점인 EFS Access Point를 통한 마운트 방식을 사용할 수도 있으며, AWS Transfer Family 서비스를 통해 접근하는 방식도 존재합니다.
+
+---
+
+```json
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "StorageEfsFileSystemF296E1B3",
+         "Arn"
+        ]
+       }
+```
+
+`"Resource"`에는 `"Fn::GetAtt"`를 사용해 `"StorageEfsFileSystemF296E1B3"` 리소스의 `"Arn"` 값을 가져오고 있습니다. 즉, 이 권한은 모든 EFS가 아니라 해당 EFS 파일 시스템 하나에만 적용됩니다.
