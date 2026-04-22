@@ -1,4 +1,4 @@
 ---
-title: "Fudamentals Lab Notes"
+title: "Fundamentals Lab Notes"
 weight: 2
 ---
