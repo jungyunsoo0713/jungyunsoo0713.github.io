@@ -14,6 +14,8 @@ aws ecs create-cluster --cluster-name retail-store-ecs-cluster --settings name=c
 
 `--cluster-name retail-store-ecs-cluster` 옵션은 클러스터 이름을 `retail-store-ecs-cluster`로 지정합니다.
 
+---
+
 `--settings name=containerInsights,value=enhanced` 옵션은 이 클러스터에서 Container Insights를 `enhanced` 모드로 활성화합니다. Container Insights는 CloudWatch에서 ECS 클러스터, 서비스, 태스크 수준의 메트릭과 모니터링 정보를 더 자세히 확인할 수 있게 해주는 기능입니다.
 
 ---
@@ -46,9 +48,15 @@ aws ecs create-cluster --cluster-name retail-store-ecs-cluster --settings name=c
 
 `"registeredContainerInstancesCount"`는 이 ECS Cluster에 등록된 EC2 컨테이너 인스턴스 수를 의미합니다. 여기서 컨테이너 인스턴스는 ECS 에이전트가 설치되어 클러스터에 등록된 EC2 인스턴스를 뜻합니다. 참고로 Fargate는 EC2 인스턴스를 클러스터에 직접 등록해 사용하는 방식이 아니라 AWS가 관리하는 서버리스 인프라에서 태스크를 실행하는 방식이므로, 이 값에는 카운트되지 않습니다.
 
+---
+
 `"runningTasksCount"`는 현재 실행 중인 태스크 수를 의미합니다. 태스크는 하나 이상의 컨테이너를 포함할 수 있는 실행 단위이며, 이 값에는 EC2 인스턴스에서 실행 중인 태스크뿐 아니라 Fargate에서 실행 중인 태스크도 포함됩니다.
 
+---
+
 `"pendingTasksCount"`는 현재 이 ECS Cluster에서 `PENDING` 상태인 태스크 수를 의미합니다. 즉 아직 실행이 완료된 것은 아니고, 실행을 준비 중인 태스크 수를 나타냅니다.
+
+---
 
 `"activeServicesCount"`는 이 ECS Cluster에서 현재 `ACTIVE` 상태인 ECS Service 개수를 의미합니다. 여기서 `ACTIVE`는 서비스가 현재 유효하게 존재하는 상태를 뜻합니다.
 
@@ -70,6 +78,8 @@ ECS Service (예: Retail Store Sample App의 orders)
     ├── Container 1 (orders-app)
     └── Container 2 (log-router)
 ```
+
+---
 
 `"statistics"`는 ECS Cluster의 추가 통계 정보를 담는 필드입니다. 이 값에는 launch type별로 구분된 태스크 수와 서비스 수 같은 정보가 포함될 수 있습니다. 다음은 `"statistics"`값의 예시 입니다.
 
@@ -94,6 +104,8 @@ ECS Service (예: Retail Store Sample App의 orders)
 ]
 ```
 
+---
+
 `"capacityProviders"`는 이 클러스터에 연결된 Capacity Provider 목록을 의미합니다. Capacity Provider는 Launch Type과 관련된 개념이지만, Launch Type처럼 단순히 ECS 태스크를 어떤 실행 기반에서 실행할지 정하는 데 그치지 않고, 그에 필요한 컴퓨팅 용량을 어떻게 관리할지도 함께 정하는 방식입니다. 여기서 "필요한 용량"이란 ECS 태스크를 실행하기 위한 컴퓨팅 자원을 뜻합니다. EC2 기반 Capacity Provider에서는 이 용량 관리가 EC2 Auto Scaling과 연결될 수 있지만, Fargate 기반 Capacity Provider에서는 AWS가 서버 인프라를 직접 관리합니다. 예를 들어 `"FARGATE"`, `"FARGATE_SPOT"`, 또는 사용자가 직접 생성한 EC2 Auto Scaling group 기반 Capacity Provider를 사용할 수 있습니다. 
 
 다음은 `"capacityProviders"` 값의 예시입니다.
@@ -109,6 +121,8 @@ ECS Service (예: Retail Store Sample App의 orders)
 참고로 클러스터의 `"capacityProviders"`에는 Fargate 계열과 EC2 Auto Scaling group 계열 Capacity Provider를 함께 연결할 수 있습니다. 다만 실제 태스크 배치에 사용되는 `"capacityProviderStrategy"` 또는 `"defaultCapacityProviderStrategy"` 안에서는 같은 계열의 Capacity Provider만 함께 사용할 수 있습니다.
 
 Launch Type과 Capacity Provider를 비교하자면, Launch Type은 ECS 태스크를 어떤 인프라에서 실행할지 직접 지정하는 방식입니다. 반면 Capacity Provider는 태스크를 어떤 실행 기반에서 실행할지뿐만 아니라, 여러 실행 기반 사이에 어떻게 분배하고 용량을 어떻게 관리할지까지 포함하는 더 유연한 방식입니다. AWS는 일반적으로 Launch Type보다 Capacity Provider 사용을 권장합니다.
+
+---
 
 `"defaultCapacityProviderStrategy"`는 이 ECS Cluster에서 기본으로 사용할 Capacity Provider 전략을 의미합니다. 여기에는 어떤 Capacity Provider를 사용할지와, 여러 Capacity Provider를 함께 사용할 경우 태스크를 어떻게 분배할지에 대한 설정이 들어갈 수 있습니다. 서비스나 태스크를 실행할 때 `"launchType"`이나 `"capacityProviderStrategy"`를 별도로 지정하지 않으면 이 값이 기본으로 적용됩니다. 
 
