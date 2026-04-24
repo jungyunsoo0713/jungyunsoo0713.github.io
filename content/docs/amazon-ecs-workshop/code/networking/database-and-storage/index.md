@@ -1,6 +1,6 @@
 ---
-title: "01. VPC 및 네트워크 인프라 (VPC, Subnets, Gateways, Endpoints, DNS"
-weight: 1
+title: 02. 데이터베이스 및 스토리지 (RDS, Redis, DynamoDB)
+weight: 2
 ---
 > **작성일:** 2026-04-24 | **수정일:** 2026-04-24
 ```json
