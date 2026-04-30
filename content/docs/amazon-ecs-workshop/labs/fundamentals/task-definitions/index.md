@@ -1,8 +1,11 @@
 ---
 title: "Task Definitions"
-weight: 3
+weight: 2
 ---
-> **작성일:** 2026-04-22 | **수정일:** 2026-04-22
+> **작성일:** 2026-04-22 | **수정일:** 2026-04-30
+
+이번 섹션에서는 컨테이너 실행 설정을 담은 Task Definition을 작성하고, 이를 ECS에 등록하는 과정을 배웁니다. 등록된 Task Definition은 이후 ECS Service를 생성하거나 Task를 직접 실행할 때 사용됩니다.
+
 ```json
 cat << EOF > retail-store-ecs-ui-taskdef.json
 {
@@ -62,6 +65,8 @@ EOF
 
 aws ecs register-task-definition --cli-input-json file://retail-store-ecs-ui-taskdef.json
 ```
+
+> 실무에서는 보통 JSON/YAML Task Definition 파일을 미리 작성한 후 AWS CLI를 통해 파일을 읽게 합니다.
 
 ECS Fargate 태스크 정의(Task Definition)입니다. 
 
@@ -268,3 +273,24 @@ IAM Role 리소스 식별자(ARN)을 의미합니다.
 ---
 
 `"taskRoleArn"`은 컨테이너 내부 애플리케이션이 사용하는 IAM Role의 리소스 식별자입니다. 이 코드에서 Role에 연결된 정책을 보면, 컨테이너는 `ssmmessages` 권한을 통해 ECS Exec에 필요한 세션 채널을 생성하고 열 수 있으며, `elasticfilesystem` 권한을 통해 지정된 EFS 파일 시스템을 마운트하고 쓰기 작업을 수행할 수 있습니다.
+
+---
+
+`aws ecs register-task-definition --cli-input-json file://retail-store-ecs-ui-taskdef.json` 이 명령어는 JSON 파일에 작성된 Task Definition 설정을 ECS에 등록합니다. `--cli-input-json file://retail-store-ecs-ui-taskdef.json` 옵션은 현재 디렉터리의 `retail-store-ecs-ui-taskdef.json` 파일을 읽어 입력값으로 사용하겠다는 의미입니다.
+
+등록에 성공하면 보통 이렇게 Task Definition이 생성됩니다.
+
+```bash
+retail-store-ecs-ui:1
+```
+
+또한 나중에 같은 이름으로 다시 등록한다면 기존의 것이 수정되는 것이 아니라 새로운 revision이 생성됩니다.
+
+```bash
+retail-store-ecs-ui:1
+retail-store-ecs-ui:2
+retail-store-ecs-ui:3
+```
+
+Task Definition을 수정하지 않고 새로운 리비전을 만드는 이유는 각 실행 설정을 버전으로 남겨 두기 위해서입니다. ECS는 기존 Task Definition을 직접 수정하지 않고, 변경된 설정을 새로운 리비전으로 등록합니다. 이를 통해 어떤 설정으로 태스크가 실행되었는지 추적할 수 있고, 문제가 생겼을 때 이전 리비전으로 되돌릴 수도 있습니다.
+
