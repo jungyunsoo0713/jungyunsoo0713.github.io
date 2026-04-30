@@ -1,7 +1,6 @@
 ---
 title: "Enable ECS Exec"
 weight: 5
-draft: true
 ---
 > **작성일:** 2026-04-30 | **수정일:** 2026-04-30
 
