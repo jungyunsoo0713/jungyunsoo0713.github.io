@@ -2,7 +2,7 @@
 title: "Deployments"
 weight: 1
 ---
-
+> **작성일:** 2026-04-28 | **수정일:** 2026-04-28
 ```json
 {
   "DeploymentsManualApprovalBucket4C81F2B1": {
