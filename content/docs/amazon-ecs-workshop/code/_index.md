@@ -1,4 +1,4 @@
 ---
-title: "Amazon ECS Workshop - Code Analysis"
+title: "Infrastructure Code Analysis"
 weight: 1
 ---
