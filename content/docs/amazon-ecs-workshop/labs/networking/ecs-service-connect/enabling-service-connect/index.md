@@ -1,6 +1,6 @@
 ---
 title: "Enabling Service Connect"
-weight: 0
+weight: 1
 ---
 > **작성일:** 2026-05-01 | **수정일:** 2026-05-01
 ## Deploy the Orders service
