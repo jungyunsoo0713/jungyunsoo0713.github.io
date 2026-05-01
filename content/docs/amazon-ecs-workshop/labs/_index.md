@@ -1,4 +1,4 @@
 ---
-title: "Amazon ECS Workshop Labs"
+title: "Labs"
 weight: 2
 ---
