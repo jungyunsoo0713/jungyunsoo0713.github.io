@@ -1,3 +1,7 @@
+---
+title: "Project: Mastering Amazon ECS Fundamentals with Amazon ECS Workshop"
+weight: 1
+---
 > **작성일:** 2026-05-02 | **수정일:** 2026-05-02
 ## 프로젝트 소개
 
