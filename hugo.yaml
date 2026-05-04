@@ -47,8 +47,8 @@ menu:
 
 params:
   navbar:
-    displayTitle: true
-    displayLogo: false
+    displayTitle: false
+    displayLogo: true
     logo:
       path: images/eastbound-labs-logo-and-logotype.png
       link: /
