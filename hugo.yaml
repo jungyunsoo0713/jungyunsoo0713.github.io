@@ -52,6 +52,7 @@ params:
     displayLogo: true
     logo:
       path: images/eastbound-labs-logo-and-logotype.png
+      dark: images/eastbound-labs-logo-and-logotype-gold.png
       link: /
       width: 180
       height: 60
