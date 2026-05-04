@@ -50,7 +50,7 @@ params:
     displayTitle: true
     displayLogo: false
     logo:
-      path: images/eastbound-labs-logo.png
+      path: images/eastbound-labs-logo-and-logotype.png
       link: /
       width: 180
       height: 60
