@@ -8,10 +8,10 @@ weight: 2
 
 ## Amazon ECS Core Components
 
-ECS Cluster: 서비스들과 태스크들의 논리적 집합
-Service: 동일한 태스크들의 집합
-Task: 하나 이상의 컨테이너를 실행하는 단위
-Task Definition: 태스크의 설계도
+- ECS Cluster: 서비스들과 태스크들의 논리적 집합
+- Service: 동일한 태스크들의 집합
+- Task: 하나 이상의 컨테이너를 실행하는 단위
+- Task Definition: 태스크의 설계도
 
 ## ECS Service
 
