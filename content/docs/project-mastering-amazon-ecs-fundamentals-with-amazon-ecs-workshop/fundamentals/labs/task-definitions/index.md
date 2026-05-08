@@ -2,6 +2,7 @@
 title: "Task Definitions"
 weight: 2
 ---
+> **작성일:** 2026-05-08 | **수정일:** 2026-05-08
 
 다음은 ECS 클러스터에 제일 먼저 생성할 UI 서비스에서 실행할 태스크의 Task Definition입니다.
 
