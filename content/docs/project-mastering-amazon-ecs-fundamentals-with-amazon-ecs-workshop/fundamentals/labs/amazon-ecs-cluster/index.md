@@ -2,8 +2,11 @@
 title: "Amazon ECS Cluster"
 weight: 1
 ---
+> **작성일:** 2026-05-08 | **수정일:** 2026-05-08
 
 이번 랩에서는 ECS 클러스터, ECS 서비스, Task Definition을 포함한 ECS의 핵심 컴포넌트들을 생성합니다. 이번 랩의 목표는 ALB 뒤에서 작동하는 컨테이너들을 배포하는 것입니다.
+
+---
 
 이번 섹션에서는 `retail-store-ecs-cluster`라는 이름을 가진 ECS 클러스터를 생성합니다.
 
