@@ -111,7 +111,7 @@ aws ecs list-task-definitions --family-prefix retail-store-ecs-ui --sort DESC --
 
 다음은 이 명령어의 출력입니다.
 
-```bash
+```json
 {
   "taskDefinitionArns": [
     "arn:aws:ecs:ap-northeast-3:802104112480:task-definition/retail-store-ecs-ui:2",
