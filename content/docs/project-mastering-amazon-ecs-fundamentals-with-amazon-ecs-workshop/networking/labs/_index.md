@@ -5,6 +5,7 @@ weight: 2
 > **작성일:** 2026-05-10 | **수정일:** 2026-05-10
 
 다음은 Lab 실습에 사용하는 Retail Store Sample App 네트워크 구조의 일부입니다.
+
 ![Microservices Architecture](microservices-architecture.svg)
 
 `UI -> Orders` 구간에서 `http://orders`는 UI 서비스가 Orders 서비스의 API를 호출하는 것을 의미합니다. 주문 목록 조회, 주문 상세 조회 등의 API를 호출합니다.
