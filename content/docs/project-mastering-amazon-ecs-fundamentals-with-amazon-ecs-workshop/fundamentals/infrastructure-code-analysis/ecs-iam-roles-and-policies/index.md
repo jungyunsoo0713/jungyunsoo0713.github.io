@@ -2,7 +2,7 @@
 title: "06. ECS 권한 (IAM Roles & Policies)"
 weight: 6
 ---
-> **작성일:** 2026-05-04 | **수정일:** 2026-05-04
+> **작성일:** 2026-05-10 | **수정일:** 2026-05-10
 ```json
 {
   "BasicRetailStoreEcsTaskExecutionRoleCAE88D2C": {
@@ -423,4 +423,37 @@ IAM Role을 생성하는 리소스입니다. 이 IAM Role은 ECS Task가 실행 
 IAM Policy를 생성하는 리소스입니다. 앞서 생성한 IAM Role(`"BasicRetailStoreEcsTaskRole14589F14"`)에는 `PermissionsBoundary2D0B48CC` Permissions Boundary가 지정되었습니다. 이 IAM Policy 또한 연결되어 앞서 생성한 IAM Role에 실제 권한을 부여합니다.
 
 ---
+
+이 블록은 `"Statement"`의 첫 번째 내용에 대한 설명입니다.
+
+`"Action"`의 값들인 `"ssmmessages:CreateControlChannel"`, `"ssmmessages:CreateDataChannel"`, `"ssmmessages:OpenControlChannel"`, `"ssmmessages:OpenDataChannel"`에서 `ssmmessages`는 AWS Systems Manager Session Manager에서 사용하는 메시지 통신용 서비스인 SSM Messages를 의미합니다. ECS Exec으로 컨테이너에 접속하여 명령어를 사용할 때, 명령어 입력과 출력을 SSM Messages 채널을 통해 주고받습니다.
+
+`"ssmmessages:CreateControlChannel"`은 이 SSM Messages 채널 중 하나인 제어 채널을 생성합니다. 제어 채널은 ECS Exec 세션을 시작하고 유지하기 위한 제어 신호를 주고받는 채널입니다.
+
+`"ssmmessages:OpenControlChannel"`은 생성된 제어 채널을 엽니다.
+
+`"ssmmessages:CreateDataChannel"`은 SSM Messages 채널 중 하나인 데이터 채널을 생성합니다. 데이터 채널은 ECS Exec 기능으로 입력된 명령어의 입력과 출력이 오고 가는 채널입니다.
+
+`"ssmmessages:OpenControlChannel"`은 생성된 데이터 채널을 엽니다.
+
+`"Resource": "*"`는 일반적으로 특정 리소스가 아닌 위 `"Action"`이 취해질 수 있는 모든 리소스를 대상으로 한다는 의미를 가집니다. 하지만 이 `ssmmessages` 작업의 대상이 되는 리소스를 지정한다는 개념 자체가 존재하지 않기 때문에 여기서는 이 값을 `"*"`로 설정합니다.
+
+---
+
+이 블록은 `"Statement"`의 두 번째 내용에 대한 설명입니다.
+
+`"Action"`의 값들인 `"elasticfilesystem:ClientMount"`, `"elasticfilesystem:ClientRootAccess"`, `"elasticfilesystem:ClientWrite"`에서 `elasticfilesystem`는 Amazon Elastic File System(EFS)을 의미합니다. EFS는 각 ECS 태스크의 컨테이너에서 실행되는 애플리케이션들이 서로 공통으로 공유해야 할 파일들을 위해 필요합니다.
+
+`"elasticfilesystem:ClientMount"`는 클라이언트가 EFS를 마운트하는 작업을 의미합니다. 여기서 클라이언트는 EFS를 마운트하는 쪽인 ECS 태스크 안의 컨테이너를 의미합니다.
+
+`"elasticfilesystem:ClientRootAccess"`는 클라이언트가 EFS에 root 사용자 권한으로 접근하는 작업을 의미합니다.
+
+`"elasticfilesystem:ClientWrite"`는 클라이언트가 EFS에 쓰기 작업을 수행하는 작업을 의미합니다.
+
+`"Condition"`은 지정된 조건이 만족될 때만 해당 `"Statement"`의 내용이 적용됨을 의미합니다.
+
+`"elasticfilesystem:AccessedViaMountTarget": "true"`는 이 EFS에 Mount Target을 통해 접근했을 때를 의미합니다. 즉 클라이언트가 이 EFS에 Mount Target을 통해 접근했을 때에 한해서만 이 `"Action"`의 작업들이 허용됩니다.
+
+`"Resource"`를 보면 `"StorageEfsFileSystemF296E1B3"`의 ARN 값을 지정함을 알 수 있습니다. 즉, 이 `"Action"`의 대상이 되는 리소스가 `"StorageEfsFileSystemF296E1B3"` EFS로 한정됨을 의미합니다.
+
 
