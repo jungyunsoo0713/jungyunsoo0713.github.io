@@ -2,7 +2,7 @@
 title: "01. VPC 및 네트워크 인프라 (VPC, Subnets, Gateways, Endpoints, DNS"
 weight: 1
 ---
-> **작성일:** 2026-05-04 | **수정일:** 2026-05-04
+> **작성일:** 2026-05-04 | **수정일:** 2026-05-10
 ```json
 {
   "NetworkRetailStoreDnsNamespace0ED145E4": {
@@ -130,7 +130,7 @@ weight: 1
       "Key": "CreationDate",
       "Value": "2026-03-31"
      },
-     {
+	     {
       "Key": "Name",
       "Value": "EcsImmersionDay/Network/RetailStoreVPC2/PublicSubnet1"
      },
@@ -677,6 +677,8 @@ orders.retailstore.local  →  10.0.1.25
 orders.retailstore.local  →  10.0.2.41
 checkout.retailstore.local → 10.0.3.18
 ```
+
+>엄밀히 말하자면, Private DNS Namespace 리소스 생성 시 자동으로 생성된 Route 53 Private Hosted Zone가 Private IP 주소와 DNS 이름을 매핑한 DNS 레코드 정보를 저장하고 관리합니다.
 
 Orders 서비스의 태스크가 2개 있으면 `orders.retailstore.local` 하나가 여러 프라이빗 IP로 해석될 수 있습니다.
 
