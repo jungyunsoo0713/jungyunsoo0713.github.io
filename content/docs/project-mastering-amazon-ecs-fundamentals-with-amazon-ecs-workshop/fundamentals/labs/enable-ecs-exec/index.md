@@ -423,4 +423,46 @@ cat /etc/os-release
 df -h
 ```
 
+이 명령어의 출력입니다.
+
+```bash
+
+The Session Manager plugin was installed successfully. Use the AWS CLI to start a session.
+
+
+Starting session with SessionId: ecs-execute-command-h58qgzkd8fpy9j6gkxa7rrkkii
+bash-5.2# cat /etc/os-release
+NAME="Amazon Linux"
+VERSION="2023"
+ID="amzn"
+ID_LIKE="fedora"
+VERSION_ID="2023"
+PLATFORM_ID="platform:al2023"
+PRETTY_NAME="Amazon Linux 2023.8.20250721"
+ANSI_COLOR="0;33"
+CPE_NAME="cpe:2.3:o:amazon:amazon_linux:2023"
+HOME_URL="https://aws.amazon.com/linux/amazon-linux-2023/"
+DOCUMENTATION_URL="https://docs.aws.amazon.com/linux/"
+SUPPORT_URL="https://aws.amazon.com/premiumsupport/"
+BUG_REPORT_URL="https://github.com/amazonlinux/amazon-linux-2023"
+VENDOR_NAME="AWS"
+VENDOR_URL="https://aws.amazon.com/"
+SUPPORT_END="2029-06-30"
+bash-5.2# whoami
+root
+bash-5.2# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          21G  1.6G   18G   8% /
+tmpfs            64M     0   64M   0% /dev
+shm             1.9G     0  1.9G   0% /dev/shm
+tmpfs           1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/root       1.1G  1.1G     0 100% /dev/init
+/dev/nvme1n1     21G  1.6G   18G   8% /etc/hosts
+/dev/nvme0n1p8  2.9G   15M  2.9G   1% /managed-agents/execute-command/certs
+tmpfs           1.9G     0  1.9G   0% /proc/acpi
+tmpfs           1.9G     0  1.9G   0% /sys/firmware
+tmpfs           1.9G     0  1.9G   0% /proc/scsi
+bash-5.2# 
+```
+
 AWS CLI에서 직접 `aws ecs execute-command \ ... \ --command "cat /etc/os-release"` 명령어를 사용하여 컨테이너 내부에서 명령어를 실행할 수도 있지만, 컨테이너의 셸을 실행시키는 것이 더 간편합니다.
