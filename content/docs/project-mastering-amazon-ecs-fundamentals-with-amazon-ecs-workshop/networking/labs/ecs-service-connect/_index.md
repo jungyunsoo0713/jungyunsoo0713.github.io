@@ -2,11 +2,15 @@
 title: "ECS Service Connect"
 weight: 1
 ---
+> **작성일:** 2026-05-10 | **수정일:** 2026-05-10
+
 ECS Service Connect는 ECS 서비스 간 통신에 사용되는 기능입니다. 이 기능은 ECS 서비스를 긴 엔드포인트나 복잡한 주소 대신, 짧은 DNS 이름이나 별칭(Alias)으로 접근할 수 있게 해줍니다. 이 DNS 이름이나 별칭은 ECS 클러스터 내부에서 사용될 수 있고, 네트워크 연결과 관련 설정이 되어 있다면 ECS 클러스터 간, VPC 간, 혹은 같은 AWS Region 안의 AWS 계정 간에도 사용될 수 있습니다.
 
->주의할 점으로, VPC의 설정인 `"EnableDnsSupport": true`와 ECS Service Connect 기능의 작동 여부는 관계가 없다는 점입니다. `"EnableDnsSupport": true`는 AWS의 Route 53 Resolver 기반 DNS 해석과 관련된 설정이고, ECS Service Connect는 컨테이너 내부의 `/etc/hosts`를 참조하기 때문에 이 둘은 서로 독립적입니다. 다만 어차피 실무에서는 대부분 `"EnableDnsSupport": true`로 설정하기 때문에 크게 신경 쓸 점은 아닙니다.
+>VPC의 설정인` "EnableDnsSupport": true`와 ECS Service Connect 활성화 여부는 관계없습니다.` "EnableDnsSupport": true`는 VPC의 DNS 해석 기능을 활성화하는 것이고, ECS Service Connect는 태스크의 컨테이너 내부의` /etc/hosts`를 참조하는 것이기 때문입니다.
 
-이전에 살펴보았던 DNS 네임스페이스 리소스인 `"NetworkRetailStoreDnsNamespace0ED145E4"`는 `"retailstore.local"`이라는 Cloud Map Private DNS Namespace를 생성합니다. 이 네임스페이스는 ECS Service Connect에서 서비스들을 묶는 namespace로 사용될 수 있습니다.
+---
+
+이전에 생성한 Private DNS Namespace 리소스와 ECS Service Connect가 연관성이 있습니다. 
 
 ```json
   "NetworkRetailStoreDnsNamespace0ED145E4": {
@@ -35,6 +39,13 @@ ECS Service Connect는 ECS 서비스 간 통신에 사용되는 기능입니다.
   },
 ```
 
-세부 매커니즘을 알아보면, 이 Private DNS Namespace 리소스가 생성되고 VPC에 매핑되면(VPC 내부의 리소스용 DNS Namespace로 사용되면), AWS는 백그라운드에서 Route 53 Private Hosted Zone을 자동으로 생성합니다. 하지만 이 Private DNS Namespace를 ECS Service Connect 용도로 사용할 경우, 애플리케이션 트래픽은 Route 53 Resolver를 거쳐 DNS 레코드를 직접 조회하는 방식으로 전달되지 않습니다. 
+ECS에서 서비스 검색 방식에는 ECS Service Discovery 방식과 ECS Service Connect 방식이 존재합니다.
 
-ECS Service Connect는 Private DNS Namespace 안에 Service Connect endpoint(예: `http://backend.retailstore.local:8080`)를 생성하고, 컨테이너 내부의 `/etc/hosts` 기반 이름 해석을 통해(이미 `/etc/hosts` 파일 안에 매핑된 DNS 레코드 존재함) 해당 이름이 Service Connect proxy, 즉 Envoy 기반 프록시로 연결되도록 구성합니다.
+ECS Service Discovery 방식에서는, Private DNS Namespace 리소스 생성 시 자동으로 생성된 Route 53 Private Hosted Zone이 Private IP 주소와 DNS 이름을 매핑한 DNS 레코드 정보를 저장하고 관리합니다. VPC의 Route 53 Resolver는 이 Route 53 Private Hosted Zone의 DNS 레코드 정보를 참조해 DNS 해석 기능을 제공합니다.
+
+ECS Service Connect 방식에서는, Private DNS Namespace 리소스 생성 시 자동으로 만들어지는 Route 53 Private Hosted Zone을 사용하지 않으며, 해당 Hosted Zone에 DNS 레코드를 생성하지도 않습니다. 즉, ECS Service Connect 때문에 Route 53 Private Hosted Zone의 DNS 레코드 정보가 바뀌지는 않습니다.
+
+ECS Service Connect 방식에서는, 애플리케이션이 목적지 엔드포인트를 호출하면 컨테이너 내부의 `/etc/hosts`를 참조하여 트래픽이 로컬 Service Connect 프록시(Envoy)로 전달됩니다. 이후 프록시는 Amazon ECS가 AWS Cloud Map을 기반으로 생성하고 관리하는 Service Connect endpoint 정보를 바탕으로 트래픽을 로드밸런싱하여 목적지 서비스로 전달합니다. Service Connect endpoint 정보는 ECS 서비스에 Service Connect 설정을 넣고 배포할 때 생성됩니다.
+
+
+
