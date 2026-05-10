@@ -1,4 +1,4 @@
 ---
-titie: "Networking"
+titie: "Networking - Labs"
 weight: 5
 ---
