@@ -24,6 +24,8 @@ Resources 탭에서는 Express Mode가 자동으로 프로비저닝한 모든 AW
 
 ![](ecs-express-mode-services-resources.png)
 
+---
+
 다음 명령어를 실행하여 `ui-express-mode` 서비스의 최신 리비전에 대한 ECS Express Mode 구성을 확인합니다.
 
 ```bash
@@ -42,6 +44,8 @@ aws ecs describe-service-revisions \
 ```bash
 aws ecs list-task-definitions --family-prefix retail-store-ecs-cluster-ui-express-mode --sort DESC --max-items 2
 ```
+
+---
 
 Load Balancer 콘솔 페이지를 열고 `ecs-express-gateway-alb-XXXXXXXX`라는 이름의 로드 밸런서를 클릭하여 생성된 Load Balancer의 구성 세부 정보를 확인합니다.
 
