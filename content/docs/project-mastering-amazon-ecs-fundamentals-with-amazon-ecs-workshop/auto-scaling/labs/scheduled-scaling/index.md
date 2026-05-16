@@ -54,7 +54,7 @@ aws ecs describe-tasks \
 
 이 명령어의 출력입니다.
 
-![aws-ecs-describe-tasks 명령어 출력](aws-ecs-describe-tasks.png)
+![aws-ecs-describe-tasks 명령어 출력](aws-ecs-describe-tasks-blur.png)
 
 `ACTIVATING`으로 표시된 Fargate 시작 유형 태스크들이 스케일 아웃 중인 태스크입니다. 현재는 모두 `RUNNING`이기 때문에 스케일 아웃이 완료되어 모든 태스크가 실행 중입니다.
 
