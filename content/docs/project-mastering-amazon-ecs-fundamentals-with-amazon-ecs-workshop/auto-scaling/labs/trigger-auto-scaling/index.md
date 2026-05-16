@@ -31,7 +31,7 @@ sleep 90 && aws cloudwatch wait alarm-exists --alarm-name-prefix \
  TargetTracking-service/retail-store-ecs-cluster/ui-AlarmHigh --state-value ALARM
 ```
 
-다음 명령어를 실행하여 현재 스케일 아웃 중인 태스크를 확인할 수 있습니다.
+다음 명령어를 실행하여 현재 스케일 아웃 중인 태스크를 포함한 전체 태스크들을 확인할 수 있습니다.
 
 ```bash
 aws ecs describe-tasks \
@@ -64,7 +64,7 @@ AWS 콘솔의 클러스터 탭의 이벤트 탭에서 Target Tracking Scaling Po
 pkill -9 hey
 ```
 
-다음 명령어를 실행하여 현재 ECS 서비스가 안정화될 때까지 기다린 후, 서비스의 원하는 태스크 수를 `2`로 변경하여 업데이트합니다. 이를 통해 스케일 아웃 시 생성된 태스크들을 빠르게 종료할 수 있습니다.
+다음 명령어를 실행하여 현재 ECS 서비스가 안정화될 때까지 기다린 후, 서비스의 원하는 태스크 수를 `2`로 변경하여 업데이트합니다. 이를 통해 스케일 아웃 시 생성된 태스크의 수를 다시 줄일 수 있습니다.
 
 ```bash
 aws ecs wait services-stable --cluster retail-store-ecs-cluster --services ui
