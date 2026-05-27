@@ -761,3 +761,38 @@ website_url = "http://retail-alb-790537774.ap-northeast-2.elb.amazonaws.com"
 `http://retail-alb-790537774.ap-northeast-2.elb.amazonaws.com`
 
 ---
+
+**작업 요약:**
+
+1. 기본 인프라 및 Git 설정: `main.tf` 파일로 AWS 기본 인프라를 구성하고, `.gitignore` 파일로 깃허브에 올라가면 안 될 파일을 정해줍니다.
+
+2. CI/CD 파이프라인 구성: GitHub Actions 파일인 `deploy.yml`을 작성하여, `main` 브랜치에 코드가 푸시되면 자동으로 배포 파이프라인을 가동합니다.
+
+3. 도커 이미지 빌드 및 푸시: 이 배포 파이프라인은 프론트엔드와 백엔드를 포함한 5개의 핵심 서비스 도커 이미지를 생성(Build)한 뒤, AWS ECR(Elastic Container Registry)에 안전하게 업로드하여 실제 서버(ECS)에 배포될 준비를 완벽하게 마칩니다.
+
+4. UI 서비스 최종 배포: `ecs-ui.tf` 파일은 ECR에 저장된 UI 도커 이미지를 기반으로 AWS ECS(Fargate) 환경에 실제 컨테이너를 구동하고, Application Load Balancer(ALB)를 연동하여 사용자가 인터넷 브라우저로 접속할 수 있는 퍼블릭 엔드포인트를 제공합니다.
+
+**트러블 슈팅 요약:**
+
+이번 프로젝트를 진행하며 인프라 구축과 CI/CD 파이프라인 배포 과정에서 여러 이슈를 마주했고, 다음과 같이 원인을 분석하여 해결했습니다.
+
+1. 소스 코드(`src`) 경로 누락으로 인한 파이프라인 실패
+	- 문제: 초기에 GitHub Actions 워크플로우 실행 시, 마이크로서비스 코드가 담긴 `src/` 디렉터리를 찾지 못해 도커 이미지 빌드 단계에서 오류가 발생했습니다.
+	- 해결: 누락된 `src/` 하위의 애플리케이션 코드들이 깃허브 저장소에 빠짐없이 포함(Push)되도록 경로를 확인하고 재반영하여 워크플로우를 정상화했습니다.
+	
+2. AWS 자격 증명(Credentials) 누락에 따른 ECR 인증 실패
+    - 문제: 빌드된 도커 이미지를 AWS ECR에 Push 하는 과정에서, `configure-aws-credentials` 단계의 인증 실패로 워크플로우가 중단되었습니다.
+    - 해결: AWS IAM 사용자로부터 발급받은 액세스 키(`AWS_ACCESS_KEY_ID`)와 시크릿 키(`AWS_SECRET_ACCESS_KEY`)를 GitHub Repository Secrets에 안전하게 등록하여, 파이프라인이 정상적으로 AWS 자원에 접근할 수 있도록 권한 문제를 조치했습니다.
+    
+3. 불필요한 리소스(`assets`) 충돌 및 빌드 오류
+    - 문제: 원본 프로젝트 구조에 포함되어 있던 `assets` 디렉터리 관련 설정들로 인해 워크플로우 빌드 및 인프라 구성 단계에서 충돌이 발생했습니다.
+    - 해결: 현재 배포 목표에 불필요한 파일로 판단하여, `deploy.yml`과 `main.tf`에서`assets` 관련 코드를 완전히 제거하고 인프라 구성을 단순화하여 해결했습니다.
+    
+4. `mvnw` 파일의 실행 권한 유실 (Permission denied)
+    - 문제: 리눅스 환경인 GitHub Actions 러너에서 Java 코드를 빌드하려 할 때, Maven Wrapper(`mvnw`) 파일이 일반 텍스트 파일로 인식되어 `Permission denied` 에러가 발생했습니다.
+    - 해결: 로컬 환경에서 Git으로 코드를 관리할 때 실행 권한이 누락된 것을 파악하고, 로컬 터미널에서 `git update-index --chmod=+x` 명령어를 통해 실행 권한을 강제로 부여하여 빌드 에러를 조치했습니다.
+    
+5. 초기 배포 직후 503 / 502 에러 발생 (애플리케이션 워밍업 지연) - 본문에서 언급 안됨
+    - 문제: 프론트엔드(UI) 서비스 배포를 마치고 로드밸런서(ALB) 주소로 접속했을 때, 503 Service Temporarily Unavailable 및 502 Bad Gateway 에러가 연달아 발생했습니다.
+    - 해결: 인프라나 서버의 크래시(Crash)가 아닌, 컨테이너 내부의 Java(Spring Boot) 애플리케이션이 완전히 부팅되고 헬스 체크(Health Check)에 응답하기까지 필요한 워밍업 지연 시간임을 파악했습니다. 일정 시간 대기 후 ALB와 컨테이너 간의 통신이 안정화되며 정상적인 웹사이트 접속에 성공했습니다.
+
